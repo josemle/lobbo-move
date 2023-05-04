@@ -1,5 +1,5 @@
 [package]
-name = "MoveTests"
+name = "Fibonacci"
 version = "0.0.0"
 
 [addresses]
