@@ -1,4 +1,4 @@
-module deploy_address::test {
+module deploy_address::set_val {
 
 	use std::signer;
 
@@ -20,7 +20,7 @@ module deploy_address::test {
 	}
 
 	#[test(account = @0x1)]
-	public entry fun sender_can_set_val(account: signer) acquires Test {
+	public fun sender_can_set_val(account: signer) acquires Test {
 		let addr = signer::address_of(&account);
 		aptos_framework::account::create_account_for_test(addr);
 		set_val(&account,  4);
