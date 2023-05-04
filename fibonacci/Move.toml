@@ -3,7 +3,7 @@ name = "MoveTests"
 version = "0.0.0"
 
 [addresses]
-deploy_address = "0x221e04878647f87928e83d1a0f0ec826a40364527027dca5a940d6ae95e8fdf1"
+deploy_address = "_"
 
 [dependencies]
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "devnet" }
