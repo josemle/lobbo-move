@@ -24,5 +24,5 @@ aptos move run --function-id 0x221e04878647f87928e83d1a0f0ec826a40364527027dca5a
 ### Run set_val entry function
 This command runs the ```set_val``` function inside ```test``` module.
 ```
-aptos move run --function-id 0x221e04878647f87928e83d1a0f0ec826a40364527027dca5a940d6ae95e8fdf1::test::set_val --args u64:6 --assume-yes
+aptos move run --function-id 0x221e04878647f87928e83d1a0f0ec826a40364527027dca5a940d6ae95e8fdf1::set_val::set_val --args u64:6 --assume-yes
 ```
