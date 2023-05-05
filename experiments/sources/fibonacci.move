@@ -6,9 +6,22 @@ module deploy_address::fibonacci {
 		fib_result: u64
 	}
 
-	public fun fib(n : u64) : u64 {
+	struct Foo has drop {
+		foo_field: u64
+	}
+
+	public fun fib(n : u64): u64 {
 		if (n < 2) 1
 		else fib(n - 1) + fib(n - 2)
+	}
+
+	public fun add(x: u64, y: u64): u64 {
+		let foo = Foo { foo_field: 78 };
+		foo.foo_field
+	}
+
+	public fun foo(x: u64): Foo {
+		Foo { foo_field: x }
 	}
 
 	public entry fun move_fib(account: &signer, n: u64) acquires FibResult {
