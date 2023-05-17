@@ -3,9 +3,20 @@ module deploy_address::abilities2 {
 	use std::signer;
 	use deploy_address::abilities;
 
-	/*public fun new_country(id: u8, population: u64): abilities::Country {
-        abilities::Country { id, population }
-    }*/
+	struct S has drop {
+		a: u8
+	}
+
+	public fun g(x: S) {}
+
+	public fun f(x: S) {
+		g(x)
+	}
+
+	public fun main() {
+		let x = S { a: 56 };
+		f(x);
+	}
 
 
 }
