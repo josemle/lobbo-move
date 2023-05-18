@@ -12,7 +12,7 @@ def g(x: pt.Expr, y: pt.Expr) -> pt.Expr:
 def f(x: pt.Expr) -> pt.Expr:
     u1 = g(pt.Add(x, pt.Int(4)), pt.Add(pt.Int(8), pt.Int(10)))
     u2 = g(pt.Add(x, pt.Int(4)), pt.Add(pt.Int(8), pt.Int(10)))
-    u3 = g(pt.Add(x, pt.Int(4)), pt.Add(pt.Int(8), pt.Int(10)))
+    u3 = g(pt.Add(x, pt.Int(1)), pt.Add(pt.Int(8), pt.Int(10)))
     return pt.Minus(u2, u3)
 
 @app.external
