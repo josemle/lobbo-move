@@ -1,18 +1,35 @@
+// questo preambolo è a livello di modulo e contiene tutte le costanti intere e tutti i nomi delle struct
 preamble:
-       intcblock 0 1 39 
+       intcblock 0 1 39 5 78
 	   bytecblock "Nested1" "Nested2" "Nested3" "Simple"
 
+		// TODO1: il preambolo deve chiamare una entry con callsub prima o poi
+		// TODO2: emettere la txna Sender per avere il signer e passarlo come arg normale alle funzioni sia entry che non
 
+//entry public main(Arg0: &signer)
+main:
+	   // abbiamo un solo arg
+	   proto 1 0
+	   frame_dig -1
+	   store 0
+	   // lo scrach space è inizializzato
+	0: load 0
+	1: callsub moveto2
+	3: load 0
+	4: callsub moveto2
+	5: retsub
+
+
+//public moveto1(Arg0: &signer, Arg1: u64) 
 moveto1:
        proto 2 0
-	   // come strategia generale, tutti gli args nel call stack frame preparati dalla proto li mettiamo sempre nello scratch space
+	   // tutti gli args nel call stack frame preparati dalla proto li mettiamo sempre nello scratch space
 	   frame_dig -2  // se abbiamo N args, servono N frame_dig + store 
 	   store 0
 	   frame_dig -1
 	   store 1
-	   // ora lo scrach space è a posto
-	0: // se la funzione non è una entry, allora trattiamo il signer come argomento normale
-	   load 0   // arg0: &signer
+	   // lo scrach space è inizializzato
+	0: load 0   // arg0: &signer
 	1: load 1   // arg1: u64
 	2: intc_2	// 39
 	3: +
@@ -20,50 +37,82 @@ moveto1:
 	5:
 	   // per tradurre la Pack dobbiamo convertire in byte[] tutti i campi che sono ora nello stack
 	   // per farlo, dobbiamo fare un gioco di spostamenti sullo stack che alla fine ripristinerà l'ordine originale
-	   // sia N = numero di campi, emettiamo unconver (N-1) per N volte ciascuna seguita dalla conversione del datatype (itob in questo caso)
+	   // sia N = numero di campi, emettiamo unconver (N-1) per N volte ciascuna seguita dalla conversione del datatype (itob in questo caso)   
 	   uncover 1	// i campi sono 2, quindi spostiamo con offset 1
 	   itob			// convertiamo un int in un byte[]
 	   uncover 1	// di nuovo uncover 1 perché i campi sono 2 e l'offset è sempre uguale
 	   itob 
 	   // alla fine ci ritroviamo con tutti i campi convertiti e nell'ordine giusto
 	   // ora dobbiamo concatenare tutti i byte[]: bisogna emettere concat N-1 volte
-	   concat 
-	   concat 		// 2 concat 
+	   concat 		// 1 concat perché abbiamo 2 campi
 	   // ora abbiamo un unico byte[] lungo che rappresenta l'intera struct
 	6: 
 	   // per tradurre la MoveTo dobbiamo seppellire nello stack gli arg additionali della app_local_put
 	   // il signer di Move è già sullo stack di algorand per la load di arg0 alla label 0:
-	   // lo stack corrente è: signer, packed_struct
+	   // stack: signer, packed_struct
 	   // dobbiamo seppellire solo la key
 	   bytec_3		// questo 3 viene dalla MoveTo[3] ed è la costante 3 del bytecblock
-	   // lo stack corrente è: signer, packed_struct, key
+	   // stack: signer, packed_struct, key
 	   cover 1
-	   // lo stack corrente è: signer, key, packed_struct
+	   // stack: signer, key, packed_struct
 	   app_local_put
 	7: retsub
 }
-entry public moveto2(Arg0: &signer) {
-B0:
-	0: MoveLoc[0](Arg0: &signer)
-	1: LdU64(5)
-	2: LdFalse
-	3: Pack[2](Simple)
-	4: LdU64(78)
-	5: Pack[0](Nested1)
-	6: MoveTo[0](Nested1)
-	7: Ret
+
+//public moveto2(Arg0: &signer) {
+moveto2:
+	   proto 1 0
+	   frame_dig -1
+	   store 0
+	0: load 0	// arg0: &signer
+	1: intc_3	// 5
+	2: intc_0	// false
+	3: uncover 1
+	   itob
+	   uncover 1
+	   itob
+	   concat
+	4: intc_4	// 78
+	5: uncover 1  	// nessuna conversione: basta emettere la uncover 1 e nessuna itob
+	   uncover 1
+	   itob     	// converte 78 in byte[]
+	   concat
+	6: 
+	  // stack: signer, packed_struct
+	  bytec_0		// 0 = Nested1
+	  cover 1
+	  // stack: signer, key, packed_struct
+	  app_local_put
+	7: retsub
 }
-entry public moveto3(Arg0: &signer) {
+public moveto3(Arg0: &signer) {
 B0:
 	0: MoveLoc[0](Arg0: &signer)
 	1: LdU64(5)
 	2: LdFalse
-	3: Pack[2](Simple)
+	3: Pack[3](Simple)
 	4: LdU64(34)
 	5: Pack[0](Nested1)
 	6: LdU64(9099)
 	7: PackGeneric[0](Nested2<Nested1>)
 	8: MoveToGeneric[0](Nested2<Nested1>)
 	9: Ret
+}
+public moveto4(Arg0: &signer) {
+L0:	loc1: Nested3
+B0:
+	0: LdU64(5)
+	1: LdFalse
+	2: Pack[3](Simple)
+	3: StLoc[1](loc0: Simple)
+	4: CopyLoc[1](loc0: Simple)
+	5: LdU64(88)
+	6: MoveLoc[1](loc0: Simple)
+	7: Pack[2](Nested3)
+	8: StLoc[2](loc1: Nested3)
+	9: MoveLoc[0](Arg0: &signer)
+	10: MoveLoc[2](loc1: Nested3)
+	11: MoveTo[2](Nested3)
+	12: Ret
 }
 }

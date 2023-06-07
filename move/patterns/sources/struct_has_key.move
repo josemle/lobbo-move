@@ -28,7 +28,7 @@ module deploy_address::struct_has_key {
 	}
 
 
-	public entry fun moveto2(account: &signer) {
+	public fun moveto2(account: &signer) {
 		let n = 5;
 		let s1 = Simple { f: n, g: false };
 		let s2 = Nested1 { a: s1, b: 78 };
@@ -36,7 +36,7 @@ module deploy_address::struct_has_key {
 	}
 
 	
-	public entry fun moveto3(account: &signer) {
+	public fun moveto3(account: &signer) {
 		let n = 5;
 		let s1 = Simple { f: n, g: false };
 		let s2 = Nested1 { a: s1, b: 34 };
@@ -44,11 +44,16 @@ module deploy_address::struct_has_key {
 		move_to(account, s3);
 	}
 
-	public entry fun moveto4(account: &signer) {
+	public fun moveto4(account: &signer) {
 		let n = 5;
 		let s1 = Simple { f: n, g: false };
 		let s2 = Nested3 { a: s1, b: 88, c: s1 };
 		move_to(account, s2);
+	}
+
+	public entry fun main(account: &signer) {
+		moveto2(account);
+		moveto2(account);
 	}
 
 }
