@@ -13,8 +13,8 @@ app = Application(
 )
 
 @app.external
-def set(input: pt.abi.Uint64) -> pt.Expr:
-    return app.state.localInt.set(input.get())
+def set(input: pt.abi.Uint64, a: pt.abi.Uint64, b: pt.abi.Uint64) -> pt.Expr:
+    return app.state.localInt.set(pt.Add(input.get(), a.get(), b.get()))
 
 
 @app.external
