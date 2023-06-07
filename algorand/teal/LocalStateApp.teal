@@ -1,0 +1,80 @@
+#pragma version 8
+intcblock 0 1
+bytecblock 0x6d796b6579
+txn NumAppArgs
+intc_0 // 0
+==
+bnz main_l6
+txna ApplicationArgs 0
+pushbytes 0xd20a58fb // "set(uint64)void"
+==
+bnz main_l5
+txna ApplicationArgs 0
+pushbytes 0x50ea81cb // "get()uint64"
+==
+bnz main_l4
+err
+main_l4:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+callsub get_1
+store 0
+pushbytes 0x151f7c75 // 0x151f7c75
+load 0
+itob
+concat
+log
+intc_1 // 1
+return
+main_l5:
+txn OnCompletion
+intc_0 // NoOp
+==
+txn ApplicationID
+intc_0 // 0
+!=
+&&
+assert
+txna ApplicationArgs 1
+btoi
+callsub set_0
+intc_1 // 1
+return
+main_l6:
+txn OnCompletion
+intc_0 // NoOp
+==
+bnz main_l8
+err
+main_l8:
+txn ApplicationID
+intc_0 // 0
+==
+assert
+intc_1 // 1
+return
+
+// set
+set_0:
+proto 1 0
+txn Sender
+bytec_0 // "mykey"
+frame_dig -1
+app_local_put
+retsub
+
+// get
+get_1:
+proto 0 1
+intc_0 // 0
+txn Sender
+bytec_0 // "mykey"
+app_local_get
+frame_bury 0
+retsub
