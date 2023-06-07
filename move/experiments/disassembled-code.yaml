@@ -1,4 +1,5 @@
 // Move bytecode v6
+<<<<<<< HEAD
 module 221e04878647f87928e83d1a0f0ec826a40364527027dca5a940d6ae95e8fdf1.struct_has_key {
 struct S has key {
 	f: u64,
@@ -21,5 +22,752 @@ B0:
 	3: Pack[0](S)
 	4: MoveTo[0](S)
 	5: Ret
+=======
+module 1.object {
+use 0000000000000000000000000000000000000000000000000000000000000001::account;
+use 0000000000000000000000000000000000000000000000000000000000000001::bcs;
+use 0000000000000000000000000000000000000000000000000000000000000001::create_signer;
+use 0000000000000000000000000000000000000000000000000000000000000001::error;
+use 0000000000000000000000000000000000000000000000000000000000000001::event;
+use 0000000000000000000000000000000000000000000000000000000000000001::from_bcs;
+use 0000000000000000000000000000000000000000000000000000000000000001::guid;
+use 0000000000000000000000000000000000000000000000000000000000000001::hash;
+use 0000000000000000000000000000000000000000000000000000000000000001::signer;
+use 0000000000000000000000000000000000000000000000000000000000000001::vector;
+
+
+struct ConstructorRef has drop {
+	self: address,
+	can_delete: bool
+}
+struct DeleteRef has drop, store {
+	self: address
+}
+struct DeriveRef has drop, store {
+	self: address
+}
+struct ExtendRef has drop, store {
+	self: address
+}
+struct LinearTransferRef has drop {
+	self: address,
+	owner: address
+}
+struct Object<phantom Ty0> has copy, drop, store {
+	inner: address
+}
+struct ObjectCore has key {
+	guid_creation_num: u64,
+	owner: address,
+	allow_ungated_transfer: bool,
+	transfer_events: EventHandle<TransferEvent>
+}
+struct ObjectGroup {
+	dummy_field: bool
+}
+struct TransferEvent has drop, store {
+	object: address,
+	from: address,
+	to: address
+}
+struct TransferRef has drop, store {
+	self: address
+}
+
+public address_from_constructor_ref(Arg0: &ConstructorRef): address {
+B0:
+	0: MoveLoc[0](Arg0: &ConstructorRef)
+	1: ImmBorrowField[0](ConstructorRef.self: address)
+	2: ReadRef
+	3: Ret
+}
+public address_from_delete_ref(Arg0: &DeleteRef): address {
+B0:
+	0: MoveLoc[0](Arg0: &DeleteRef)
+	1: ImmBorrowField[1](DeleteRef.self: address)
+	2: ReadRef
+	3: Ret
+}
+public address_from_extend_ref(Arg0: &ExtendRef): address {
+B0:
+	0: MoveLoc[0](Arg0: &ExtendRef)
+	1: ImmBorrowField[2](ExtendRef.self: address)
+	2: ReadRef
+	3: Ret
+}
+public address_to_object<Ty0: key>(Arg0: address): Object<Ty0> {
+B0:
+	0: CopyLoc[0](Arg0: address)
+	1: Exists[6](ObjectCore)
+	2: BrFalse(4)
+B1:
+	3: Branch(7)
+B2:
+	4: LdConst[4](U64: [2, 0, 0, 0, 0, 0, 0, 0])
+	5: Call error::not_found(u64): u64
+	6: Abort
+B3:
+	7: CopyLoc[0](Arg0: address)
+	8: Call exists_at<Ty0>(address): bool
+	9: BrFalse(11)
+B4:
+	10: Branch(14)
+B5:
+	11: LdConst[6](U64: [7, 0, 0, 0, 0, 0, 0, 0])
+	12: Call error::not_found(u64): u64
+	13: Abort
+B6:
+	14: MoveLoc[0](Arg0: address)
+	15: PackGeneric[0](Object<Ty0>)
+	16: Ret
+}
+public can_generate_delete_ref(Arg0: &ConstructorRef): bool {
+B0:
+	0: MoveLoc[0](Arg0: &ConstructorRef)
+	1: ImmBorrowField[3](ConstructorRef.can_delete: bool)
+	2: ReadRef
+	3: Ret
+}
+public convert<Ty0: key, Ty1: key>(Arg0: Object<Ty0>): Object<Ty1> {
+B0:
+	0: ImmBorrowLoc[0](Arg0: Object<Ty0>)
+	1: ImmBorrowFieldGeneric[0](Object.inner: address)
+	2: ReadRef
+	3: Call address_to_object<Ty1>(address): Object<Ty1>
+	4: Ret
+}
+public create_guid(Arg0: &signer): GUID {
+L0:	loc1: &mut ObjectCore
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: Call signer::address_of(&signer): address
+	2: StLoc[1](loc0: address)
+	3: CopyLoc[1](loc0: address)
+	4: MutBorrowGlobal[6](ObjectCore)
+	5: StLoc[2](loc1: &mut ObjectCore)
+	6: MoveLoc[1](loc0: address)
+	7: MoveLoc[2](loc1: &mut ObjectCore)
+	8: MutBorrowField[5](ObjectCore.guid_creation_num: u64)
+	9: Call guid::create(address, &mut u64): GUID
+	10: Ret
+}
+public create_guid_object_address(Arg0: address, Arg1: u64): address {
+B0:
+	0: MoveLoc[0](Arg0: address)
+	1: MoveLoc[1](Arg1: u64)
+	2: Call guid::create_id(address, u64): ID
+	3: StLoc[3](loc1: ID)
+	4: ImmBorrowLoc[3](loc1: ID)
+	5: Call bcs::to_bytes<ID>(&ID): vector<u8>
+	6: StLoc[2](loc0: vector<u8>)
+	7: MutBorrowLoc[2](loc0: vector<u8>)
+	8: LdConst[10](U8: [253])
+	9: VecPushBack(41)
+	10: MoveLoc[2](loc0: vector<u8>)
+	11: Call hash::sha3_256(vector<u8>): vector<u8>
+	12: Call from_bcs::to_address(vector<u8>): address
+	13: Ret
+}
+public create_named_object(Arg0: &signer, Arg1: vector<u8>): ConstructorRef {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: Call signer::address_of(&signer): address
+	2: StLoc[2](loc0: address)
+	3: ImmBorrowLoc[2](loc0: address)
+	4: MoveLoc[1](Arg1: vector<u8>)
+	5: Call create_object_address(&address, vector<u8>): address
+	6: StLoc[3](loc1: address)
+	7: MoveLoc[2](loc0: address)
+	8: MoveLoc[3](loc1: address)
+	9: LdFalse
+	10: Call create_object_internal(address, address, bool): ConstructorRef
+	11: Ret
+}
+public create_object_address(Arg0: &address, Arg1: vector<u8>): address {
+B0:
+	0: MoveLoc[0](Arg0: &address)
+	1: Call bcs::to_bytes<address>(&address): vector<u8>
+	2: StLoc[2](loc0: vector<u8>)
+	3: MutBorrowLoc[2](loc0: vector<u8>)
+	4: MoveLoc[1](Arg1: vector<u8>)
+	5: Call vector::append<u8>(&mut vector<u8>, vector<u8>)
+	6: MutBorrowLoc[2](loc0: vector<u8>)
+	7: LdConst[11](U8: [254])
+	8: VecPushBack(41)
+	9: MoveLoc[2](loc0: vector<u8>)
+	10: Call hash::sha3_256(vector<u8>): vector<u8>
+	11: Call from_bcs::to_address(vector<u8>): address
+	12: Ret
+}
+public create_object_from_account(Arg0: &signer): ConstructorRef {
+B0:
+	0: CopyLoc[0](Arg0: &signer)
+	1: Call account::create_guid(&signer): GUID
+	2: StLoc[1](loc0: GUID)
+	3: MoveLoc[0](Arg0: &signer)
+	4: Call signer::address_of(&signer): address
+	5: MoveLoc[1](loc0: GUID)
+	6: Call create_object_from_guid(address, GUID): ConstructorRef
+	7: Ret
+}
+create_object_from_guid(Arg0: address, Arg1: GUID): ConstructorRef {
+B0:
+	0: ImmBorrowLoc[1](Arg1: GUID)
+	1: Call bcs::to_bytes<GUID>(&GUID): vector<u8>
+	2: StLoc[2](loc0: vector<u8>)
+	3: MutBorrowLoc[2](loc0: vector<u8>)
+	4: LdConst[10](U8: [253])
+	5: VecPushBack(41)
+	6: MoveLoc[2](loc0: vector<u8>)
+	7: Call hash::sha3_256(vector<u8>): vector<u8>
+	8: Call from_bcs::to_address(vector<u8>): address
+	9: StLoc[3](loc1: address)
+	10: MoveLoc[0](Arg0: address)
+	11: MoveLoc[3](loc1: address)
+	12: LdTrue
+	13: Call create_object_internal(address, address, bool): ConstructorRef
+	14: Ret
+}
+public create_object_from_object(Arg0: &signer): ConstructorRef {
+B0:
+	0: CopyLoc[0](Arg0: &signer)
+	1: Call create_guid(&signer): GUID
+	2: StLoc[1](loc0: GUID)
+	3: MoveLoc[0](Arg0: &signer)
+	4: Call signer::address_of(&signer): address
+	5: MoveLoc[1](loc0: GUID)
+	6: Call create_object_from_guid(address, GUID): ConstructorRef
+	7: Ret
+}
+create_object_internal(Arg0: address, Arg1: address, Arg2: bool): ConstructorRef {
+B0:
+	0: CopyLoc[1](Arg1: address)
+	1: Exists[6](ObjectCore)
+	2: Not
+	3: BrFalse(5)
+B1:
+	4: Branch(8)
+B2:
+	5: LdConst[5](U64: [1, 0, 0, 0, 0, 0, 0, 0])
+	6: Call error::already_exists(u64): u64
+	7: Abort
+B3:
+	8: CopyLoc[1](Arg1: address)
+	9: Call create_signer::create_signer(address): signer
+	10: StLoc[4](loc1: signer)
+	11: LdConst[7](U64: [0, 0, 0, 0, 0, 0, 4, 0])
+	12: StLoc[3](loc0: u64)
+	13: CopyLoc[1](Arg1: address)
+	14: MutBorrowLoc[3](loc0: u64)
+	15: Call guid::create(address, &mut u64): GUID
+	16: StLoc[5](loc2: GUID)
+	17: ImmBorrowLoc[4](loc1: signer)
+	18: MoveLoc[3](loc0: u64)
+	19: MoveLoc[0](Arg0: address)
+	20: LdTrue
+	21: MoveLoc[5](loc2: GUID)
+	22: Call event::new_event_handle<TransferEvent>(GUID): EventHandle<TransferEvent>
+	23: Pack[6](ObjectCore)
+	24: MoveTo[6](ObjectCore)
+	25: MoveLoc[1](Arg1: address)
+	26: MoveLoc[2](Arg2: bool)
+	27: Pack[0](ConstructorRef)
+	28: Ret
+}
+public(friend) create_user_derived_object(Arg0: address, Arg1: &DeriveRef): ConstructorRef {
+B0:
+	0: CopyLoc[0](Arg0: address)
+	1: MoveLoc[1](Arg1: &DeriveRef)
+	2: ImmBorrowField[6](DeriveRef.self: address)
+	3: ReadRef
+	4: Call create_user_derived_object_address(address, address): address
+	5: StLoc[2](loc0: address)
+	6: MoveLoc[0](Arg0: address)
+	7: MoveLoc[2](loc0: address)
+	8: LdFalse
+	9: Call create_object_internal(address, address, bool): ConstructorRef
+	10: Ret
+}
+public create_user_derived_object_address(Arg0: address, Arg1: address): address {
+B0:
+	0: ImmBorrowLoc[0](Arg0: address)
+	1: Call bcs::to_bytes<address>(&address): vector<u8>
+	2: StLoc[2](loc0: vector<u8>)
+	3: MutBorrowLoc[2](loc0: vector<u8>)
+	4: ImmBorrowLoc[1](Arg1: address)
+	5: Call bcs::to_bytes<address>(&address): vector<u8>
+	6: Call vector::append<u8>(&mut vector<u8>, vector<u8>)
+	7: MutBorrowLoc[2](loc0: vector<u8>)
+	8: LdConst[9](U8: [252])
+	9: VecPushBack(41)
+	10: MoveLoc[2](loc0: vector<u8>)
+	11: Call hash::sha3_256(vector<u8>): vector<u8>
+	12: Call from_bcs::to_address(vector<u8>): address
+	13: Ret
+}
+public delete(Arg0: DeleteRef) {
+B0:
+	0: ImmBorrowLoc[0](Arg0: DeleteRef)
+	1: ImmBorrowField[1](DeleteRef.self: address)
+	2: ReadRef
+	3: MoveFrom[6](ObjectCore)
+	4: Unpack[6](ObjectCore)
+	5: StLoc[1](loc0: EventHandle<TransferEvent>)
+	6: Pop
+	7: Pop
+	8: Pop
+	9: MoveLoc[1](loc0: EventHandle<TransferEvent>)
+	10: Call event::destroy_handle<TransferEvent>(EventHandle<TransferEvent>)
+	11: Ret
+}
+public disable_ungated_transfer(Arg0: &TransferRef) {
+B0:
+	0: MoveLoc[0](Arg0: &TransferRef)
+	1: ImmBorrowField[7](TransferRef.self: address)
+	2: ReadRef
+	3: MutBorrowGlobal[6](ObjectCore)
+	4: StLoc[1](loc0: &mut ObjectCore)
+	5: LdFalse
+	6: MoveLoc[1](loc0: &mut ObjectCore)
+	7: MutBorrowField[8](ObjectCore.allow_ungated_transfer: bool)
+	8: WriteRef
+	9: Ret
+}
+public enable_ungated_transfer(Arg0: &TransferRef) {
+B0:
+	0: MoveLoc[0](Arg0: &TransferRef)
+	1: ImmBorrowField[7](TransferRef.self: address)
+	2: ReadRef
+	3: MutBorrowGlobal[6](ObjectCore)
+	4: StLoc[1](loc0: &mut ObjectCore)
+	5: LdTrue
+	6: MoveLoc[1](loc0: &mut ObjectCore)
+	7: MutBorrowField[8](ObjectCore.allow_ungated_transfer: bool)
+	8: WriteRef
+	9: Ret
+}
+native exists_at<Ty0: key>(Arg0: address): bool
+public generate_delete_ref(Arg0: &ConstructorRef): DeleteRef {
+B0:
+	0: CopyLoc[0](Arg0: &ConstructorRef)
+	1: ImmBorrowField[3](ConstructorRef.can_delete: bool)
+	2: ReadRef
+	3: BrFalse(5)
+B1:
+	4: Branch(10)
+B2:
+	5: MoveLoc[0](Arg0: &ConstructorRef)
+	6: Pop
+	7: LdConst[0](U64: [5, 0, 0, 0, 0, 0, 0, 0])
+	8: Call error::permission_denied(u64): u64
+	9: Abort
+B3:
+	10: MoveLoc[0](Arg0: &ConstructorRef)
+	11: ImmBorrowField[0](ConstructorRef.self: address)
+	12: ReadRef
+	13: Pack[1](DeleteRef)
+	14: Ret
+}
+public generate_derive_ref(Arg0: &ConstructorRef): DeriveRef {
+B0:
+	0: MoveLoc[0](Arg0: &ConstructorRef)
+	1: ImmBorrowField[0](ConstructorRef.self: address)
+	2: ReadRef
+	3: Pack[2](DeriveRef)
+	4: Ret
+}
+public generate_extend_ref(Arg0: &ConstructorRef): ExtendRef {
+B0:
+	0: MoveLoc[0](Arg0: &ConstructorRef)
+	1: ImmBorrowField[0](ConstructorRef.self: address)
+	2: ReadRef
+	3: Pack[3](ExtendRef)
+	4: Ret
+}
+public generate_linear_transfer_ref(Arg0: &TransferRef): LinearTransferRef {
+B0:
+	0: CopyLoc[0](Arg0: &TransferRef)
+	1: ImmBorrowField[7](TransferRef.self: address)
+	2: ReadRef
+	3: PackGeneric[1](Object<ObjectCore>)
+	4: Call owner<ObjectCore>(Object<ObjectCore>): address
+	5: StLoc[1](loc0: address)
+	6: MoveLoc[0](Arg0: &TransferRef)
+	7: ImmBorrowField[7](TransferRef.self: address)
+	8: ReadRef
+	9: MoveLoc[1](loc0: address)
+	10: Pack[4](LinearTransferRef)
+	11: Ret
+}
+public generate_signer(Arg0: &ConstructorRef): signer {
+B0:
+	0: MoveLoc[0](Arg0: &ConstructorRef)
+	1: ImmBorrowField[0](ConstructorRef.self: address)
+	2: ReadRef
+	3: Call create_signer::create_signer(address): signer
+	4: Ret
+}
+public generate_signer_for_extending(Arg0: &ExtendRef): signer {
+B0:
+	0: MoveLoc[0](Arg0: &ExtendRef)
+	1: ImmBorrowField[2](ExtendRef.self: address)
+	2: ReadRef
+	3: Call create_signer::create_signer(address): signer
+	4: Ret
+}
+public generate_transfer_ref(Arg0: &ConstructorRef): TransferRef {
+B0:
+	0: MoveLoc[0](Arg0: &ConstructorRef)
+	1: ImmBorrowField[0](ConstructorRef.self: address)
+	2: ReadRef
+	3: Pack[9](TransferRef)
+	4: Ret
+}
+public is_object(Arg0: address): bool {
+B0:
+	0: MoveLoc[0](Arg0: address)
+	1: Exists[6](ObjectCore)
+	2: Ret
+}
+public is_owner<Ty0: key>(Arg0: Object<Ty0>, Arg1: address): bool {
+B0:
+	0: MoveLoc[0](Arg0: Object<Ty0>)
+	1: Call owner<Ty0>(Object<Ty0>): address
+	2: MoveLoc[1](Arg1: address)
+	3: Eq
+	4: Ret
+}
+public new_event_handle<Ty0: drop + store>(Arg0: &signer): EventHandle<Ty0> {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: Call create_guid(&signer): GUID
+	2: Call event::new_event_handle<Ty0>(GUID): EventHandle<Ty0>
+	3: Ret
+}
+public object_address<Ty0: key>(Arg0: &Object<Ty0>): address {
+B0:
+	0: MoveLoc[0](Arg0: &Object<Ty0>)
+	1: ImmBorrowFieldGeneric[0](Object.inner: address)
+	2: ReadRef
+	3: Ret
+}
+public object_from_constructor_ref<Ty0: key>(Arg0: &ConstructorRef): Object<Ty0> {
+B0:
+	0: MoveLoc[0](Arg0: &ConstructorRef)
+	1: ImmBorrowField[0](ConstructorRef.self: address)
+	2: ReadRef
+	3: Call address_to_object<Ty0>(address): Object<Ty0>
+	4: Ret
+}
+public object_from_delete_ref<Ty0: key>(Arg0: &DeleteRef): Object<Ty0> {
+B0:
+	0: MoveLoc[0](Arg0: &DeleteRef)
+	1: ImmBorrowField[1](DeleteRef.self: address)
+	2: ReadRef
+	3: Call address_to_object<Ty0>(address): Object<Ty0>
+	4: Ret
+}
+public owner<Ty0: key>(Arg0: Object<Ty0>): address {
+B0:
+	0: ImmBorrowLoc[0](Arg0: Object<Ty0>)
+	1: ImmBorrowFieldGeneric[0](Object.inner: address)
+	2: ReadRef
+	3: Exists[6](ObjectCore)
+	4: BrFalse(6)
+B1:
+	5: Branch(9)
+B2:
+	6: LdConst[4](U64: [2, 0, 0, 0, 0, 0, 0, 0])
+	7: Call error::not_found(u64): u64
+	8: Abort
+B3:
+	9: ImmBorrowLoc[0](Arg0: Object<Ty0>)
+	10: ImmBorrowFieldGeneric[0](Object.inner: address)
+	11: ReadRef
+	12: ImmBorrowGlobal[6](ObjectCore)
+	13: ImmBorrowField[9](ObjectCore.owner: address)
+	14: ReadRef
+	15: Ret
+}
+public owns<Ty0: key>(Arg0: Object<Ty0>, Arg1: address): bool {
+B0:
+	0: ImmBorrowLoc[0](Arg0: Object<Ty0>)
+	1: Call object_address<Ty0>(&Object<Ty0>): address
+	2: StLoc[2](loc0: address)
+	3: CopyLoc[2](loc0: address)
+	4: CopyLoc[1](Arg1: address)
+	5: Eq
+	6: BrFalse(9)
+B1:
+	7: LdTrue
+	8: Ret
+B2:
+	9: CopyLoc[2](loc0: address)
+	10: Exists[6](ObjectCore)
+	11: BrFalse(13)
+B3:
+	12: Branch(16)
+B4:
+	13: LdConst[4](U64: [2, 0, 0, 0, 0, 0, 0, 0])
+	14: Call error::not_found(u64): u64
+	15: Abort
+B5:
+	16: MoveLoc[2](loc0: address)
+	17: ImmBorrowGlobal[6](ObjectCore)
+	18: ImmBorrowField[9](ObjectCore.owner: address)
+	19: ReadRef
+	20: StLoc[3](loc1: address)
+B6:
+	21: CopyLoc[1](Arg1: address)
+	22: CopyLoc[3](loc1: address)
+	23: Neq
+	24: BrFalse(46)
+B7:
+	25: Branch(26)
+B8:
+	26: LdU8(1)
+	27: LdConst[8](U8: [8])
+	28: Lt
+	29: BrFalse(31)
+B9:
+	30: Branch(34)
+B10:
+	31: LdConst[1](U64: [6, 0, 0, 0, 0, 0, 0, 0])
+	32: Call error::out_of_range(u64): u64
+	33: Abort
+B11:
+	34: CopyLoc[3](loc1: address)
+	35: Exists[6](ObjectCore)
+	36: Not
+	37: BrFalse(40)
+B12:
+	38: LdFalse
+	39: Ret
+B13:
+	40: MoveLoc[3](loc1: address)
+	41: ImmBorrowGlobal[6](ObjectCore)
+	42: ImmBorrowField[9](ObjectCore.owner: address)
+	43: ReadRef
+	44: StLoc[3](loc1: address)
+	45: Branch(21)
+B14:
+	46: LdTrue
+	47: Ret
+}
+entry public transfer<Ty0: key>(Arg0: &signer, Arg1: Object<Ty0>, Arg2: address) {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: ImmBorrowLoc[1](Arg1: Object<Ty0>)
+	2: ImmBorrowFieldGeneric[0](Object.inner: address)
+	3: ReadRef
+	4: MoveLoc[2](Arg2: address)
+	5: Call transfer_raw(&signer, address, address)
+	6: Ret
+}
+entry public transfer_call(Arg0: &signer, Arg1: address, Arg2: address) {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: MoveLoc[1](Arg1: address)
+	2: MoveLoc[2](Arg2: address)
+	3: Call transfer_raw(&signer, address, address)
+	4: Ret
+}
+public transfer_raw(Arg0: &signer, Arg1: address, Arg2: address) {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: Call signer::address_of(&signer): address
+	2: CopyLoc[1](Arg1: address)
+	3: Call verify_ungated_and_descendant(address, address)
+	4: CopyLoc[1](Arg1: address)
+	5: MutBorrowGlobal[6](ObjectCore)
+	6: StLoc[3](loc0: &mut ObjectCore)
+	7: CopyLoc[3](loc0: &mut ObjectCore)
+	8: ImmBorrowField[9](ObjectCore.owner: address)
+	9: ReadRef
+	10: CopyLoc[2](Arg2: address)
+	11: Eq
+	12: BrFalse(16)
+B1:
+	13: MoveLoc[3](loc0: &mut ObjectCore)
+	14: Pop
+	15: Ret
+B2:
+	16: CopyLoc[3](loc0: &mut ObjectCore)
+	17: MutBorrowField[10](ObjectCore.transfer_events: EventHandle<TransferEvent>)
+	18: MoveLoc[1](Arg1: address)
+	19: CopyLoc[3](loc0: &mut ObjectCore)
+	20: ImmBorrowField[9](ObjectCore.owner: address)
+	21: ReadRef
+	22: CopyLoc[2](Arg2: address)
+	23: Pack[8](TransferEvent)
+	24: Call event::emit_event<TransferEvent>(&mut EventHandle<TransferEvent>, TransferEvent)
+	25: MoveLoc[2](Arg2: address)
+	26: MoveLoc[3](loc0: &mut ObjectCore)
+	27: MutBorrowField[9](ObjectCore.owner: address)
+	28: WriteRef
+	29: Ret
+}
+entry public transfer_to_object<Ty0: key, Ty1: key>(Arg0: &signer, Arg1: Object<Ty0>, Arg2: Object<Ty1>) {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: MoveLoc[1](Arg1: Object<Ty0>)
+	2: ImmBorrowLoc[2](Arg2: Object<Ty1>)
+	3: ImmBorrowFieldGeneric[1](Object.inner: address)
+	4: ReadRef
+	5: Call transfer<Ty0>(&signer, Object<Ty0>, address)
+	6: Ret
+}
+public transfer_with_ref(Arg0: LinearTransferRef, Arg1: address) {
+B0:
+	0: ImmBorrowLoc[0](Arg0: LinearTransferRef)
+	1: ImmBorrowField[11](LinearTransferRef.self: address)
+	2: ReadRef
+	3: MutBorrowGlobal[6](ObjectCore)
+	4: StLoc[2](loc0: &mut ObjectCore)
+	5: CopyLoc[2](loc0: &mut ObjectCore)
+	6: ImmBorrowField[9](ObjectCore.owner: address)
+	7: ReadRef
+	8: ImmBorrowLoc[0](Arg0: LinearTransferRef)
+	9: ImmBorrowField[12](LinearTransferRef.owner: address)
+	10: ReadRef
+	11: Eq
+	12: BrFalse(14)
+B1:
+	13: Branch(19)
+B2:
+	14: MoveLoc[2](loc0: &mut ObjectCore)
+	15: Pop
+	16: LdConst[2](U64: [4, 0, 0, 0, 0, 0, 0, 0])
+	17: Call error::permission_denied(u64): u64
+	18: Abort
+B3:
+	19: CopyLoc[2](loc0: &mut ObjectCore)
+	20: MutBorrowField[10](ObjectCore.transfer_events: EventHandle<TransferEvent>)
+	21: ImmBorrowLoc[0](Arg0: LinearTransferRef)
+	22: ImmBorrowField[11](LinearTransferRef.self: address)
+	23: ReadRef
+	24: CopyLoc[2](loc0: &mut ObjectCore)
+	25: ImmBorrowField[9](ObjectCore.owner: address)
+	26: ReadRef
+	27: CopyLoc[1](Arg1: address)
+	28: Pack[8](TransferEvent)
+	29: Call event::emit_event<TransferEvent>(&mut EventHandle<TransferEvent>, TransferEvent)
+	30: MoveLoc[1](Arg1: address)
+	31: MoveLoc[2](loc0: &mut ObjectCore)
+	32: MutBorrowField[9](ObjectCore.owner: address)
+	33: WriteRef
+	34: Ret
+}
+public ungated_transfer_allowed<Ty0: key>(Arg0: Object<Ty0>): bool {
+B0:
+	0: ImmBorrowLoc[0](Arg0: Object<Ty0>)
+	1: ImmBorrowFieldGeneric[0](Object.inner: address)
+	2: ReadRef
+	3: Exists[6](ObjectCore)
+	4: BrFalse(6)
+B1:
+	5: Branch(9)
+B2:
+	6: LdConst[4](U64: [2, 0, 0, 0, 0, 0, 0, 0])
+	7: Call error::not_found(u64): u64
+	8: Abort
+B3:
+	9: ImmBorrowLoc[0](Arg0: Object<Ty0>)
+	10: ImmBorrowFieldGeneric[0](Object.inner: address)
+	11: ReadRef
+	12: ImmBorrowGlobal[6](ObjectCore)
+	13: ImmBorrowField[8](ObjectCore.allow_ungated_transfer: bool)
+	14: ReadRef
+	15: Ret
+}
+verify_ungated_and_descendant(Arg0: address, Arg1: address) {
+L0:	loc2: &ObjectCore
+L1:	loc3: &ObjectCore
+B0:
+	0: MoveLoc[1](Arg1: address)
+	1: StLoc[2](loc0: address)
+	2: CopyLoc[2](loc0: address)
+	3: Exists[6](ObjectCore)
+	4: BrFalse(6)
+B1:
+	5: Branch(9)
+B2:
+	6: LdConst[4](U64: [2, 0, 0, 0, 0, 0, 0, 0])
+	7: Call error::not_found(u64): u64
+	8: Abort
+B3:
+	9: MoveLoc[2](loc0: address)
+	10: ImmBorrowGlobal[6](ObjectCore)
+	11: StLoc[4](loc2: &ObjectCore)
+	12: CopyLoc[4](loc2: &ObjectCore)
+	13: ImmBorrowField[8](ObjectCore.allow_ungated_transfer: bool)
+	14: ReadRef
+	15: BrFalse(17)
+B4:
+	16: Branch(22)
+B5:
+	17: MoveLoc[4](loc2: &ObjectCore)
+	18: Pop
+	19: LdConst[3](U64: [3, 0, 0, 0, 0, 0, 0, 0])
+	20: Call error::permission_denied(u64): u64
+	21: Abort
+B6:
+	22: MoveLoc[4](loc2: &ObjectCore)
+	23: ImmBorrowField[9](ObjectCore.owner: address)
+	24: ReadRef
+	25: StLoc[3](loc1: address)
+B7:
+	26: CopyLoc[0](Arg0: address)
+	27: CopyLoc[3](loc1: address)
+	28: Neq
+	29: BrFalse(64)
+B8:
+	30: Branch(31)
+B9:
+	31: LdU8(1)
+	32: LdConst[8](U8: [8])
+	33: Lt
+	34: BrFalse(36)
+B10:
+	35: Branch(39)
+B11:
+	36: LdConst[1](U64: [6, 0, 0, 0, 0, 0, 0, 0])
+	37: Call error::out_of_range(u64): u64
+	38: Abort
+B12:
+	39: CopyLoc[3](loc1: address)
+	40: Exists[6](ObjectCore)
+	41: BrFalse(43)
+B13:
+	42: Branch(46)
+B14:
+	43: LdConst[2](U64: [4, 0, 0, 0, 0, 0, 0, 0])
+	44: Call error::permission_denied(u64): u64
+	45: Abort
+B15:
+	46: MoveLoc[3](loc1: address)
+	47: ImmBorrowGlobal[6](ObjectCore)
+	48: StLoc[5](loc3: &ObjectCore)
+	49: CopyLoc[5](loc3: &ObjectCore)
+	50: ImmBorrowField[8](ObjectCore.allow_ungated_transfer: bool)
+	51: ReadRef
+	52: BrFalse(54)
+B16:
+	53: Branch(59)
+B17:
+	54: MoveLoc[5](loc3: &ObjectCore)
+	55: Pop
+	56: LdConst[3](U64: [3, 0, 0, 0, 0, 0, 0, 0])
+	57: Call error::permission_denied(u64): u64
+	58: Abort
+B18:
+	59: MoveLoc[5](loc3: &ObjectCore)
+	60: ImmBorrowField[9](ObjectCore.owner: address)
+	61: ReadRef
+	62: StLoc[3](loc1: address)
+	63: Branch(26)
+B19:
+	64: Ret
+>>>>>>> main
 }
 }
