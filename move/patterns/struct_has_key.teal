@@ -1,0 +1,49 @@
+// Move bytecode v6
+module f77304f0b8426e09de5799104bfbc0a0efbbdaef95b5c172fb93522a19d5ee9e.struct_has_key {
+struct Nested1 has store, key {
+	a: Simple,
+	b: u64
+}
+struct Nested2<Ty0: store> has key {
+	a: Ty0,
+	b: u64
+}
+struct Simple has store, key {
+	f: u64,
+	g: bool
+}
+
+moveto1:
+       proto 1 0
+	0: load 0
+	1: int 8
+	2: LdTrue
+	3: Pack[2](Simple)
+	4: MoveTo[2](Simple)
+	5: Ret
+}
+entry public moveto2(Arg0: &signer) {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: LdU64(5)
+	2: LdFalse
+	3: Pack[2](Simple)
+	4: LdU64(78)
+	5: Pack[0](Nested1)
+	6: MoveTo[0](Nested1)
+	7: Ret
+}
+entry public moveto3(Arg0: &signer) {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: LdU64(5)
+	2: LdFalse
+	3: Pack[2](Simple)
+	4: LdU64(34)
+	5: Pack[0](Nested1)
+	6: LdU64(9099)
+	7: PackGeneric[0](Nested2<Nested1>)
+	8: MoveToGeneric[0](Nested2<Nested1>)
+	9: Ret
+}
+}
