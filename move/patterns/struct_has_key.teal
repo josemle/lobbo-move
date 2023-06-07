@@ -1,26 +1,46 @@
-// Move bytecode v6
-module f77304f0b8426e09de5799104bfbc0a0efbbdaef95b5c172fb93522a19d5ee9e.struct_has_key {
-struct Nested1 has store, key {
-	a: Simple,
-	b: u64
-}
-struct Nested2<Ty0: store> has key {
-	a: Ty0,
-	b: u64
-}
-struct Simple has store, key {
-	f: u64,
-	g: bool
-}
+preamble:
+       intcblock 0 1 39 
+	   bytecblock "Nested1" "Nested2" "Nested3" "Simple"
+
 
 moveto1:
-       proto 1 0
-	0: load 0
-	1: int 8
-	2: LdTrue
-	3: Pack[2](Simple)
-	4: MoveTo[2](Simple)
-	5: Ret
+       proto 2 0
+	   // come strategia generale, tutti gli args nel call stack frame preparati dalla proto li mettiamo sempre nello scratch space
+	   frame_dig -2  // se abbiamo N args, servono N frame_dig + store 
+	   store 0
+	   frame_dig -1
+	   store 1
+	   // ora lo scrach space è a posto
+	0: // se la funzione non è una entry, allora trattiamo il signer come argomento normale
+	   load 0   // arg0: &signer
+	1: load 1   // arg1: u64
+	2: intc_2	// 39
+	3: +
+	4: intc_1   // true
+	5:
+	   // per tradurre la Pack dobbiamo convertire in byte[] tutti i campi che sono ora nello stack
+	   // per farlo, dobbiamo fare un gioco di spostamenti sullo stack che alla fine ripristinerà l'ordine originale
+	   // sia N = numero di campi, emettiamo unconver (N-1) per N volte ciascuna seguita dalla conversione del datatype (itob in questo caso)
+	   uncover 1	// i campi sono 2, quindi spostiamo con offset 1
+	   itob			// convertiamo un int in un byte[]
+	   uncover 1	// di nuovo uncover 1 perché i campi sono 2 e l'offset è sempre uguale
+	   itob 
+	   // alla fine ci ritroviamo con tutti i campi convertiti e nell'ordine giusto
+	   // ora dobbiamo concatenare tutti i byte[]: bisogna emettere concat N-1 volte
+	   concat 
+	   concat 		// 2 concat 
+	   // ora abbiamo un unico byte[] lungo che rappresenta l'intera struct
+	6: 
+	   // per tradurre la MoveTo dobbiamo seppellire nello stack gli arg additionali della app_local_put
+	   // il signer di Move è già sullo stack di algorand per la load di arg0 alla label 0:
+	   // lo stack corrente è: signer, packed_struct
+	   // dobbiamo seppellire solo la key
+	   bytec_3		// questo 3 viene dalla MoveTo[3] ed è la costante 3 del bytecblock
+	   // lo stack corrente è: signer, packed_struct, key
+	   cover 1
+	   // lo stack corrente è: signer, key, packed_struct
+	   app_local_put
+	7: retsub
 }
 entry public moveto2(Arg0: &signer) {
 B0:

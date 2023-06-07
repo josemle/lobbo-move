@@ -8,26 +8,33 @@ struct Nested2<Ty0: store> has key {
 	a: Ty0,
 	b: u64
 }
-struct Simple has store, key {
+struct Nested3 has store, key {
+	a: Simple,
+	b: u64,
+	c: Simple
+}
+struct Simple has copy, store, key {
 	f: u64,
 	g: bool
 }
 
-entry public moveto1(Arg0: &signer) {
+entry public moveto1(Arg0: &signer, Arg1: u64) {
 B0:
 	0: MoveLoc[0](Arg0: &signer)
-	1: LdU64(8)
-	2: LdTrue
-	3: Pack[2](Simple)
-	4: MoveTo[2](Simple)
-	5: Ret
+	1: MoveLoc[1](Arg1: u64)
+	2: LdU64(39)
+	3: Add
+	4: LdTrue
+	5: Pack[3](Simple)
+	6: MoveTo[3](Simple)
+	7: Ret
 }
 entry public moveto2(Arg0: &signer) {
 B0:
 	0: MoveLoc[0](Arg0: &signer)
 	1: LdU64(5)
 	2: LdFalse
-	3: Pack[2](Simple)
+	3: Pack[3](Simple)
 	4: LdU64(78)
 	5: Pack[0](Nested1)
 	6: MoveTo[0](Nested1)
@@ -38,12 +45,29 @@ B0:
 	0: MoveLoc[0](Arg0: &signer)
 	1: LdU64(5)
 	2: LdFalse
-	3: Pack[2](Simple)
+	3: Pack[3](Simple)
 	4: LdU64(34)
 	5: Pack[0](Nested1)
 	6: LdU64(9099)
 	7: PackGeneric[0](Nested2<Nested1>)
 	8: MoveToGeneric[0](Nested2<Nested1>)
 	9: Ret
+}
+entry public moveto4(Arg0: &signer) {
+L0:	loc1: Nested3
+B0:
+	0: LdU64(5)
+	1: LdFalse
+	2: Pack[3](Simple)
+	3: StLoc[1](loc0: Simple)
+	4: CopyLoc[1](loc0: Simple)
+	5: LdU64(88)
+	6: MoveLoc[1](loc0: Simple)
+	7: Pack[2](Nested3)
+	8: StLoc[2](loc1: Nested3)
+	9: MoveLoc[0](Arg0: &signer)
+	10: MoveLoc[2](loc1: Nested3)
+	11: MoveTo[2](Nested3)
+	12: Ret
 }
 }
