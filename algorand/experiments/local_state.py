@@ -1,17 +1,16 @@
 import pyteal as pt
-from beaker import Application, GlobalStateValue, LocalStateValue
+from beaker import Application, LocalStateValue
 from pathlib import Path
 
 class LocalState:
     localInt = LocalStateValue(
-        stack_type=pt.TealType.uint64
+        stack_type=pt.TealType.uint64,
+        key=pt.Bytes("mykey")
     )
-
 
 app = Application(
     "LocalStateApp", state=LocalState()
 )
-
 
 @app.external
 def set(input: pt.abi.Uint64) -> pt.Expr:
@@ -20,7 +19,7 @@ def set(input: pt.abi.Uint64) -> pt.Expr:
 
 @app.external
 def get(*, output: pt.abi.Uint64) -> pt.Expr:
-    return output.set(app.state.localInt)
+    return output.set(app.state.localInt.get())
 
 
 app_spec = app.build()
