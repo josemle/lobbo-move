@@ -1,3 +1,5 @@
+TODO0: come gestire la borrow
+
 // questo preambolo è a livello di modulo e contiene tutte le costanti intere e tutti i nomi delle struct
 preamble:
        intcblock 0 1 39 5 78
@@ -10,6 +12,8 @@ preamble:
 main:
 	   // #args = 1
 	   proto 1 0
+		 // TODO3: non usiamo più questo pattern delle store degli argomenti ma li lasciamo nello stack e usiamo frame dig quando ne abbiamo bisogno
+		 // load e store le usiamo solo per le StLoc, per capire quando usarle dobbiamo guardare gli indici che ci sono tra parentesi quadre
 	   frame_dig -1
 	   store 0
 	   // scratch space inizializzato
