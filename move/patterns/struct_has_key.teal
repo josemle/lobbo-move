@@ -8,11 +8,11 @@ preamble:
 
 //entry public main(Arg0: &signer)
 main:
-	   // abbiamo un solo arg
+	   // #args = 1
 	   proto 1 0
 	   frame_dig -1
 	   store 0
-	   // lo scrach space è inizializzato
+	   // scratch space inizializzato
 	0: load 0
 	1: callsub moveto2
 	3: load 0
@@ -24,11 +24,12 @@ main:
 moveto1:
        proto 2 0
 	   // tutti gli args nel call stack frame preparati dalla proto li mettiamo sempre nello scratch space
-	   frame_dig -2  // se abbiamo N args, servono N frame_dig + store 
+	   // N = #args, EMIT 'frame_dig -(N-K)' e 'store K' store con K = [0, N-1]
+	   frame_dig -2  
 	   store 0
 	   frame_dig -1
 	   store 1
-	   // lo scrach space è inizializzato
+	   // scratch space inizializzato
 	0: load 0   // arg0: &signer
 	1: load 1   // arg1: u64
 	2: intc_2	// 39
@@ -37,10 +38,10 @@ moveto1:
 	5:
 	   // per tradurre la Pack dobbiamo convertire in byte[] tutti i campi che sono ora nello stack
 	   // per farlo, dobbiamo fare un gioco di spostamenti sullo stack che alla fine ripristinerà l'ordine originale
-	   // sia N = numero di campi, emettiamo unconver (N-1) per N volte ciascuna seguita dalla conversione del datatype (itob in questo caso)   
-	   uncover 1	// i campi sono 2, quindi spostiamo con offset 1
+	   // sia N = #campi, EMIT 'unconver (N-1)' per N volte ciascuna seguita dalla conversione del datatype (itob in questo caso)   
+	   uncover 1	// #campi = 2, quindi offset = 1
 	   itob			// convertiamo un int in un byte[]
-	   uncover 1	// di nuovo uncover 1 perché i campi sono 2 e l'offset è sempre uguale
+	   uncover 1	// offset = 1, sempre uguale
 	   itob 
 	   // alla fine ci ritroviamo con tutti i campi convertiti e nell'ordine giusto
 	   // ora dobbiamo concatenare tutti i byte[]: bisogna emettere concat N-1 volte
