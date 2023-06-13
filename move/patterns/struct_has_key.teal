@@ -12,14 +12,9 @@ preamble:
 main:
 	   // #args = 1
 	   proto 1 0
-		 // TODO3: non usiamo più questo pattern delle store degli argomenti ma li lasciamo nello stack e usiamo frame dig quando ne abbiamo bisogno
-		 // load e store le usiamo solo per le StLoc, per capire quando usarle dobbiamo guardare gli indici che ci sono tra parentesi quadre
-	   frame_dig -1
-	   store 0
-	   // scratch space inizializzato
-	0: load 0
+	0: frame_dig -1
 	1: callsub moveto2
-	3: load 0
+	3: frame_dig -1
 	4: callsub moveto2
 	5: retsub
 
@@ -27,15 +22,10 @@ main:
 //public moveto1(Arg0: &signer, Arg1: u64) 
 moveto1:
        proto 2 0
-	   // tutti gli args nel call stack frame preparati dalla proto li mettiamo sempre nello scratch space
-	   // N = #args, EMIT 'frame_dig -(N-K)' e 'store K' store con K = [0, N-1]
-	   frame_dig -2  
-	   store 0
-	   frame_dig -1
-	   store 1
-	   // scratch space inizializzato
-	0: load 0   // arg0: &signer
-	1: load 1   // arg1: u64
+	   // tutti gli args nel call stack frame preparati dalla proto e ci accediamo direttamente con la frame_dig alla bisogna
+	   // se N = #args e I = #arg con 0 <= I < N, allora EMIT 'frame_dig -(N - I)'
+	0: frame_dig -2   // arg0: &signer
+	1: frame_dig -1   // arg1: u64
 	2: intc_2	// 39
 	3: +
 	4: intc_1   // true
@@ -67,9 +57,7 @@ moveto1:
 //public moveto2(Arg0: &signer) {
 moveto2:
 	   proto 1 0
-	   frame_dig -1
-	   store 0
-	0: load 0	// arg0: &signer
+	0: frame_dig -1	// arg0: &signer
 	1: intc_3	// 5
 	2: intc_0	// false
 	3: uncover 1
