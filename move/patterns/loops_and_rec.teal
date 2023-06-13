@@ -1,0 +1,143 @@
+preamble:
+	// missing preamble
+
+//public fib(Arg0: u64): u64 {
+fib:
+       proto 1 1	// N = 1; O = 1
+	0: frame_dig -1
+	1: pushint 2
+	2: <
+	3: bnz 7
+
+	4: pushint 1
+	5: store 0	// se N = #args, allora StLoc[I] diventa 'store (I - N)'
+	6: b 17
+
+	7: frame_dig -1	// Arg0
+	8: pushint 1
+	9: -
+	10: // prima di ogni callsub facciamo push delle L locals che abbiamo nello scratch space
+		// in questo caso M = 1
+	    load 0	// push sullo stack della local 0 dello scratch space (l'unica che usiamo in questo esempio)
+	    // prima di chiamare la subroutine bisogna rimettere gli argomenti di chiamata sulla cima dello stack
+		// il numero di argomenti è il primo argomento della proto della funzione chiamata
+		// in questo caso, essendo una chiamata ricorsiva, la proto è quella di questa funzione fib e N = 1
+		// EMIT 'cover N; load I' per L volte con 0 <= I < L
+		cover 1
+		callsub fib
+		// al ritorno da una callsub c'è sulla cima dello stack il risultato della subroutine
+		// tale risultato occupa O slot di stack, dove O è il secondo argomento della proto della funzione chiamata
+		// in questo caso, essendo una chiamata ricorsiva, la proto è quella di questa funzione fib e O = 1
+		// EMIT 'uncover O; store I' per L volte con 0 <= I < L
+		uncover 1
+		store 0
+		// ora sulla cima dello stack ci sono ancora gli O output della subroutine 
+		// ma non ci sono più le L locals appena sotto perché sono state rimesse sullo scratch space 
+	11: frame_dig -1	// Arg0
+	12: pushint 2
+	13: -
+	14: // stesso push/pop delle locals
+		load 0
+		cover 1
+	    callsub fib
+		uncover 1
+		store 0
+	15: +
+	16: store 0
+
+	17: load 0
+	18: retsub
+
+
+//public loop1() {
+loop1:
+       proto 0 0	// N = 0; O = 0
+	0: pushint 0
+	1: store 0
+	2: load 0
+	3: pushint 10
+	4: <
+	5: bnz 12
+
+	6: b 7
+
+	7: load 0
+	8: pushint 1
+	9: +
+	10: store 0
+	11: b 2
+
+	12: pushint 10
+	13: // in questo caso il callee loop2 ha 1 input e 0 output quindi c'è 1 cover e nessuna uncover al ritorno dalla callsub
+		load 0
+		cover 1
+		callsub loop2
+		store 0
+	14: retsub
+
+
+//public loop2(Arg0: u64) {
+loop2:
+	   proto 1 0	// N = 1; O = 0
+	0: frame_dig -1
+	1: pushint 1
+	2: -
+	3: frame_bury -1
+	4: frame_dig -1
+	5: pushint 0
+	6: <=
+	7: bnz 9
+	8: b 10
+
+	9: b 0
+	10: retsub
+
+
+//public loop3(Arg0: u64, Arg1: u64, Arg2: u64) {
+loop3:
+	   proto 3 2
+	0: frame_dig -3
+	1: pushint 1
+	2: -
+	3: frame_bury -3
+	4: frame_dig -2
+	5: frame_dig -1
+	6: +
+	7: store 0
+	8: frame_dig -1
+	9: frame_dig -3
+	10: -
+	11: store 1
+	12: frame_dig -3
+	13: pushint 0
+	14: >
+	15: bnz 17
+	16: b 18
+	17: b 0
+
+	18: frame_dig -3
+	19: load 0
+	20: load 1
+	21: +
+	22: load 0
+	23: load 1
+	24: -
+	25: 
+		load 0	// push di 2 locals dello scratch space prima di una subroutine con 3 args
+		cover 3
+		load 1
+		cover 3
+		callsub loop3
+		uncover 2	// pop di 2 locals nello scrach space dopo una subrouting con 2 output
+		store 0
+		uncover 2
+		store 1
+	
+	26: store 3
+	27: frame_bury -2
+	28: load 3
+	29: frame_bury -1
+	30: frame_dig -2 
+	31: frame_dig -1
+	32: retsub
+}

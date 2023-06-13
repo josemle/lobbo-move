@@ -51,6 +51,8 @@ module deploy_address::struct_has_key {
 		move_to(account, s2);
 	}
 
+	// TODO: move_from e borrow
+
 	public entry fun main(account: &signer) {
 		moveto2(account);
 		moveto2(account);
