@@ -30,7 +30,7 @@ fib:
 	16: store 0
 	17: load 0
 	18: // prima dell'uscita ripristiniamo le locals dello scratch space del caller
-		store 0
+		  store 0
 	    retsub
 
 

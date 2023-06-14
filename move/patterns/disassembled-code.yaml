@@ -1,109 +1,99 @@
 // Move bytecode v6
-module f77304f0b8426e09de5799104bfbc0a0efbbdaef95b5c172fb93522a19d5ee9e.loops_and_rec {
-
-
-public fib(Arg0: u64): u64 {
-B0:
-	0: CopyLoc[0](Arg0: u64)
-	1: LdU64(2)
-	2: Lt
-	3: BrFalse(7)
-B1:
-	4: LdU64(1)
-	5: StLoc[1](loc0: u64)
-	6: Branch(17)
-B2:
-	7: CopyLoc[0](Arg0: u64)
-	8: LdU64(1)
-	9: Sub
-	10: Call fib(u64): u64
-	11: MoveLoc[0](Arg0: u64)
-	12: LdU64(2)
-	13: Sub
-	14: Call fib(u64): u64
-	15: Add
-	16: StLoc[1](loc0: u64)
-B3:
-	17: MoveLoc[1](loc0: u64)
-	18: Ret
+module 221e04878647f87928e83d1a0f0ec826a40364527027dca5a940d6ae95e8fdf1.struct_has_key {
+struct Nested1 has store, key {
+	a: Simple,
+	b: u64
 }
-public loop1() {
-L0:	loc0: u64
+struct Nested2<Ty0: store> has key {
+	a: Ty0,
+	b: u64
+}
+struct Nested3 has store, key {
+	a: Simple,
+	b: u64,
+	c: Simple
+}
+struct Simple has copy, store, key {
+	f: u64,
+	g: bool
+}
+
+public borrow1(Arg0: address): u64 {
 B0:
-	0: LdU64(0)
-	1: StLoc[0](loc0: u64)
-B1:
-	2: CopyLoc[0](loc0: u64)
-	3: LdU64(10)
-	4: Lt
-	5: BrFalse(12)
-B2:
-	6: Branch(7)
-B3:
-	7: MoveLoc[0](loc0: u64)
-	8: LdU64(1)
-	9: Add
-	10: StLoc[0](loc0: u64)
-	11: Branch(2)
-B4:
-	12: LdU64(10)
-	13: Call loop2(u64)
+	0: MoveLoc[0](Arg0: address)
+	1: MutBorrowGlobal[3](Simple)
+	2: StLoc[1](loc0: &mut Simple)
+	3: CopyLoc[1](loc0: &mut Simple)
+	4: ImmBorrowField[0](Simple.f: u64)
+	5: ReadRef
+	6: LdU64(1)
+	7: Add
+	8: CopyLoc[1](loc0: &mut Simple)
+	9: MutBorrowField[0](Simple.f: u64)
+	10: WriteRef
+	11: MoveLoc[1](loc0: &mut Simple)
+	12: ImmBorrowField[0](Simple.f: u64)
+	13: ReadRef
 	14: Ret
 }
-public loop2(Arg0: u64) {
+entry public main(Arg0: &signer) {
 B0:
-	0: MoveLoc[0](Arg0: u64)
-	1: LdU64(1)
-	2: Sub
-	3: StLoc[0](Arg0: u64)
-	4: CopyLoc[0](Arg0: u64)
-	5: LdU64(0)
-	6: Le
-	7: BrFalse(9)
-B1:
-	8: Branch(10)
-B2:
-	9: Branch(0)
-B3:
-	10: Ret
+	0: CopyLoc[0](Arg0: &signer)
+	1: Call moveto2(&signer)
+	2: MoveLoc[0](Arg0: &signer)
+	3: Call moveto2(&signer)
+	4: Ret
 }
-public loop3(Arg0: u64, Arg1: u64, Arg2: u64): u64 * u64 {
+public moveto1(Arg0: &signer, Arg1: u64) {
 B0:
-	0: MoveLoc[0](Arg0: u64)
-	1: LdU64(1)
-	2: Sub
-	3: StLoc[0](Arg0: u64)
-	4: CopyLoc[1](Arg1: u64)
-	5: CopyLoc[0](Arg0: u64)
-	6: Add
-	7: StLoc[3](loc0: u64)
-	8: CopyLoc[2](Arg2: u64)
-	9: CopyLoc[0](Arg0: u64)
-	10: Sub
-	11: StLoc[4](loc1: u64)
-	12: CopyLoc[0](Arg0: u64)
-	13: LdU64(0)
-	14: Gt
-	15: BrFalse(17)
-B1:
-	16: Branch(18)
-B2:
-	17: Branch(0)
-B3:
-	18: MoveLoc[0](Arg0: u64)
-	19: CopyLoc[3](loc0: u64)
-	20: CopyLoc[4](loc1: u64)
-	21: Add
-	22: MoveLoc[3](loc0: u64)
-	23: MoveLoc[4](loc1: u64)
-	24: Sub
-	25: Call loop3(u64, u64, u64): u64 * u64
-	26: StLoc[5](loc2: u64)
-	27: StLoc[1](Arg1: u64)
-	28: MoveLoc[5](loc2: u64)
-	29: StLoc[2](Arg2: u64)
-	30: MoveLoc[1](Arg1: u64)
-	31: MoveLoc[2](Arg2: u64)
-	32: Ret
+	0: MoveLoc[0](Arg0: &signer)
+	1: MoveLoc[1](Arg1: u64)
+	2: LdU64(39)
+	3: Add
+	4: LdTrue
+	5: Pack[3](Simple)
+	6: MoveTo[3](Simple)
+	7: Ret
+}
+public moveto2(Arg0: &signer) {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: LdU64(5)
+	2: LdFalse
+	3: Pack[3](Simple)
+	4: LdU64(78)
+	5: Pack[0](Nested1)
+	6: MoveTo[0](Nested1)
+	7: Ret
+}
+public moveto3(Arg0: &signer) {
+B0:
+	0: MoveLoc[0](Arg0: &signer)
+	1: LdU64(5)
+	2: LdFalse
+	3: Pack[3](Simple)
+	4: LdU64(34)
+	5: Pack[0](Nested1)
+	6: LdU64(9099)
+	7: PackGeneric[0](Nested2<Nested1>)
+	8: MoveToGeneric[0](Nested2<Nested1>)
+	9: Ret
+}
+public moveto4(Arg0: &signer) {
+L0:	loc1: Nested3
+B0:
+	0: LdU64(5)
+	1: LdFalse
+	2: Pack[3](Simple)
+	3: StLoc[1](loc0: Simple)
+	4: CopyLoc[1](loc0: Simple)
+	5: LdU64(88)
+	6: MoveLoc[1](loc0: Simple)
+	7: Pack[2](Nested3)
+	8: StLoc[2](loc1: Nested3)
+	9: MoveLoc[0](Arg0: &signer)
+	10: MoveLoc[2](loc1: Nested3)
+	11: MoveTo[2](Nested3)
+	12: Ret
 }
 }

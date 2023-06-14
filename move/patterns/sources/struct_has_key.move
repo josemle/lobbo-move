@@ -51,6 +51,13 @@ module deploy_address::struct_has_key {
 		move_to(account, s2);
 	}
 
+	public fun borrow1(account: address ): u64 acquires Simple {
+		let s1 = borrow_global_mut<Simple>(account);
+		//let Nested1{ a: Simple {f: c, g: d}, b: e} = borrow_global_mut<Nested1>(account);
+		s1.f = s1.f + 1;
+		s1.f
+	}
+
 	// TODO: move_from e borrow
 
 	public entry fun main(account: &signer) {
