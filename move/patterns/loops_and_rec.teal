@@ -4,6 +4,11 @@ preamble:
 //public fib(Arg0: u64): u64 {
 fib:
        proto 1 1	// N = 1; O = 1
+	   // il calee fa push delle locals che la subroutine usa nello scratch space
+	   // in questo caso è 1 sola: sapere quante sono richiede una passata di pre-analisi della subroutine in Move bytecode
+	   // sia Y l'insieme degli indici I nelle CopyLoc[I]/MoveLoc[I]/StLoc[I], 
+	   // allora il numero di locals L = max(Y) - N + 1, dove N = #args
+	   load 0
 	0: frame_dig -1
 	1: pushint 2
 	2: <
@@ -16,42 +21,23 @@ fib:
 	7: frame_dig -1	// Arg0
 	8: pushint 1
 	9: -
-	10: // prima di ogni callsub facciamo push delle L locals che abbiamo nello scratch space
-		// in questo caso M = 1
-	    load 0	// push sullo stack della local 0 dello scratch space (l'unica che usiamo in questo esempio)
-	    // prima di chiamare la subroutine bisogna rimettere gli argomenti di chiamata sulla cima dello stack
-		// il numero di argomenti è il primo argomento della proto della funzione chiamata
-		// in questo caso, essendo una chiamata ricorsiva, la proto è quella di questa funzione fib e N = 1
-		// EMIT 'cover N; load I' per L volte con 0 <= I < L
-		cover 1
-		callsub fib
-		// al ritorno da una callsub c'è sulla cima dello stack il risultato della subroutine
-		// tale risultato occupa O slot di stack, dove O è il secondo argomento della proto della funzione chiamata
-		// in questo caso, essendo una chiamata ricorsiva, la proto è quella di questa funzione fib e O = 1
-		// EMIT 'uncover O; store I' per L volte con 0 <= I < L
-		uncover 1
-		store 0
-		// ora sulla cima dello stack ci sono ancora gli O output della subroutine 
-		// ma non ci sono più le L locals appena sotto perché sono state rimesse sullo scratch space 
+	10: callsub fib		
 	11: frame_dig -1	// Arg0
 	12: pushint 2
 	13: -
-	14: // stesso push/pop delle locals
-		load 0
-		cover 1
-	    callsub fib
-		uncover 1
-		store 0
+	14: callsub fib		
 	15: +
 	16: store 0
-
 	17: load 0
-	18: retsub
+	18: // prima dell'uscita ripristiniamo le locals dello scratch space del caller
+		store 0
+	    retsub
 
 
 //public loop1() {
 loop1:
        proto 0 0	// N = 0; O = 0
+	   load 0		// push di 1 local
 	0: pushint 0
 	1: store 0
 	2: load 0
@@ -68,12 +54,9 @@ loop1:
 	11: b 2
 
 	12: pushint 10
-	13: // in questo caso il callee loop2 ha 1 input e 0 output quindi c'è 1 cover e nessuna uncover al ritorno dalla callsub
-		load 0
-		cover 1
-		callsub loop2
-		store 0
-	14: retsub
+	13: callsub loop2		
+	14: store 0		// restore di 1 local
+	    retsub
 
 
 //public loop2(Arg0: u64) {
@@ -95,7 +78,9 @@ loop2:
 
 //public loop3(Arg0: u64, Arg1: u64, Arg2: u64) {
 loop3:
-	   proto 3 2
+	   proto 3 2	   
+	   load 0	// push di 2 locals
+	   load 1
 	0: frame_dig -3
 	1: pushint 1
 	2: -
@@ -122,22 +107,14 @@ loop3:
 	22: load 0
 	23: load 1
 	24: -
-	25: 
-		load 0	// push di 2 locals dello scratch space prima di una subroutine con 3 args
-		cover 3
-		load 1
-		cover 3
-		callsub loop3
-		uncover 2	// pop di 2 locals nello scrach space dopo una subrouting con 2 output
-		store 0
-		uncover 2
-		store 1
-	
+	25: callsub loop3	
 	26: store 3
 	27: frame_bury -2
 	28: load 3
 	29: frame_bury -1
 	30: frame_dig -2 
 	31: frame_dig -1
-	32: retsub
+	32: store 1		// restore di 2 locals
+		store 0
+	    retsub
 }
