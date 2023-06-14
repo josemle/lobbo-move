@@ -54,10 +54,11 @@ moveto1:
 	7: retsub
 }
 
-//public moveto2(Arg0: &signer) {
+// quando una funzione move prende un argomento di tipo &signer, in algorand diventa un argoento di tipo address (che è un byte[])
+//public moveto2(Arg0: &signer = address) {
 moveto2:
 	   proto 1 0
-	0: frame_dig -1	// arg0: &signer
+	0: frame_dig -1	// arg0: &signer = address
 	1: intc_3	// 5
 	2: intc_0	// false
 	3: uncover 1
@@ -71,41 +72,35 @@ moveto2:
 	   itob     	// converte 78 in byte[]
 	   concat
 	6: 
-	  // stack: signer, packed_struct
-	  bytec_0		// 0 = Nested1
-	  cover 1
-	  // stack: signer, key, packed_struct
-	  app_local_put
+	   // stack: address, packed_struct
+	   bytec_0		// 0 = Nested1
+	   cover 1
+	   // stack: address, key, packed_struct
+	   app_local_put
 	7: retsub
 }
-public moveto3(Arg0: &signer) {
-B0:
-	0: MoveLoc[0](Arg0: &signer)
-	1: LdU64(5)
-	2: LdFalse
-	3: Pack[3](Simple)
-	4: LdU64(34)
-	5: Pack[0](Nested1)
-	6: LdU64(9099)
-	7: PackGeneric[0](Nested2<Nested1>)
-	8: MoveToGeneric[0](Nested2<Nested1>)
-	9: Ret
+
+//public borrow1(Arg0: address): u64 {
+borrow1:
+	   proto 1 1
+	   load 0
+	0: frame_dig -1
+	1: // l'account algorand è un address; ed in move convertiamo &signer in address
+	   bytec_3	// oppure un pushbytes "Simple"
+	   app_local_get
+	   // TODO: fare la deserializzazione
+	2: store 0
+	3: load 0
+	4: ImmBorrowField[0](Simple.f: u64)
+	5: ReadRef
+	6: LdU64(1)
+	7: Add
+	8: CopyLoc[1](loc0: &mut Simple)
+	9: MutBorrowField[0](Simple.f: u64)
+	10: WriteRef
+	11: MoveLoc[1](loc0: &mut Simple)
+	12: ImmBorrowField[0](Simple.f: u64)
+	13: ReadRef
+	14: Ret
 }
-public moveto4(Arg0: &signer) {
-L0:	loc1: Nested3
-B0:
-	0: LdU64(5)
-	1: LdFalse
-	2: Pack[3](Simple)
-	3: StLoc[1](loc0: Simple)
-	4: CopyLoc[1](loc0: Simple)
-	5: LdU64(88)
-	6: MoveLoc[1](loc0: Simple)
-	7: Pack[2](Nested3)
-	8: StLoc[2](loc1: Nested3)
-	9: MoveLoc[0](Arg0: &signer)
-	10: MoveLoc[2](loc1: Nested3)
-	11: MoveTo[2](Nested3)
-	12: Ret
-}
-}
+

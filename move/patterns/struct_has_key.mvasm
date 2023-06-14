@@ -1,5 +1,8 @@
 // Move bytecode v6
 module f77304f0b8426e09de5799104bfbc0a0efbbdaef95b5c172fb93522a19d5ee9e.struct_has_key {
+use 0000000000000000000000000000000000000000000000000000000000000001::signer;
+
+
 struct Nested1 has store, key {
 	a: Simple,
 	b: u64
@@ -18,6 +21,24 @@ struct Simple has copy, store, key {
 	g: bool
 }
 
+public borrow1(Arg0: address): u64 {
+B0:
+	0: MoveLoc[0](Arg0: address)
+	1: MutBorrowGlobal[3](Simple)
+	2: StLoc[1](loc0: &mut Simple)
+	3: CopyLoc[1](loc0: &mut Simple)
+	4: ImmBorrowField[0](Simple.f: u64)
+	5: ReadRef
+	6: LdU64(1)
+	7: Add
+	8: CopyLoc[1](loc0: &mut Simple)
+	9: MutBorrowField[0](Simple.f: u64)
+	10: WriteRef
+	11: MoveLoc[1](loc0: &mut Simple)
+	12: ImmBorrowField[0](Simple.f: u64)
+	13: ReadRef
+	14: Ret
+}
 entry public main(Arg0: &signer) {
 B0:
 	0: CopyLoc[0](Arg0: &signer)
@@ -73,9 +94,16 @@ B0:
 	6: MoveLoc[1](loc0: Simple)
 	7: Pack[2](Nested3)
 	8: StLoc[2](loc1: Nested3)
-	9: MoveLoc[0](Arg0: &signer)
-	10: MoveLoc[2](loc1: Nested3)
-	11: MoveTo[2](Nested3)
-	12: Ret
+	9: CopyLoc[0](Arg0: &signer)
+	10: Call signer::address_of(&signer): address
+	11: Pop
+	12: CopyLoc[0](Arg0: &signer)
+	13: Call signer::borrow_address(&signer): &address
+	14: ReadRef
+	15: Pop
+	16: MoveLoc[0](Arg0: &signer)
+	17: MoveLoc[2](loc1: Nested3)
+	18: MoveTo[2](Nested3)
+	19: Ret
 }
 }
