@@ -16,7 +16,7 @@ struct Nested3 has store, key {
 	b: u64,
 	c: Simple
 }
-struct Simple has copy, store, key {
+struct Simple has copy, drop, store, key {
 	f: u64,
 	g: bool
 }
@@ -29,7 +29,7 @@ B0:
 	3: CopyLoc[1](loc0: &mut Simple)
 	4: ImmBorrowField[0](Simple.f: u64)
 	5: ReadRef
-	6: LdU64(1)
+	6: LdU64(2)
 	7: Add
 	8: CopyLoc[1](loc0: &mut Simple)
 	9: MutBorrowField[0](Simple.f: u64)
@@ -38,6 +38,67 @@ B0:
 	12: ImmBorrowField[0](Simple.f: u64)
 	13: ReadRef
 	14: Ret
+}
+public borrow2(Arg0: address): u64 {
+B0:
+	0: MoveLoc[0](Arg0: address)
+	1: MutBorrowGlobal[3](Simple)
+	2: MutBorrowField[0](Simple.f: u64)
+	3: StLoc[1](loc0: &mut u64)
+	4: CopyLoc[1](loc0: &mut u64)
+	5: ReadRef
+	6: CopyLoc[1](loc0: &mut u64)
+	7: WriteRef
+	8: CopyLoc[1](loc0: &mut u64)
+	9: ReadRef
+	10: LdU64(2)
+	11: Add
+	12: CopyLoc[1](loc0: &mut u64)
+	13: WriteRef
+	14: MoveLoc[1](loc0: &mut u64)
+	15: ReadRef
+	16: Ret
+}
+public borrow3(Arg0: address): u64 {
+L0:	loc1: &u64
+L1:	loc2: u64
+L2:	loc3: &Nested3
+L3:	loc4: &Simple
+B0:
+	0: MoveLoc[0](Arg0: address)
+	1: ImmBorrowGlobal[2](Nested3)
+	2: StLoc[4](loc3: &Nested3)
+	3: CopyLoc[4](loc3: &Nested3)
+	4: ImmBorrowField[1](Nested3.a: Simple)
+	5: StLoc[5](loc4: &Simple)
+	6: MoveLoc[4](loc3: &Nested3)
+	7: ImmBorrowField[2](Nested3.b: u64)
+	8: ReadRef
+	9: StLoc[3](loc2: u64)
+	10: ImmBorrowLoc[3](loc2: u64)
+	11: StLoc[2](loc1: &u64)
+	12: MoveLoc[5](loc4: &Simple)
+	13: ReadRef
+	14: StLoc[1](loc0: Simple)
+	15: ImmBorrowLoc[1](loc0: Simple)
+	16: ImmBorrowField[0](Simple.f: u64)
+	17: ReadRef
+	18: MoveLoc[2](loc1: &u64)
+	19: ReadRef
+	20: Add
+	21: Ret
+}
+public borrow4(Arg0: address) {
+B0:
+	0: MoveLoc[0](Arg0: address)
+	1: MutBorrowGlobal[3](Simple)
+	2: StLoc[1](loc0: &mut Simple)
+	3: LdU64(1)
+	4: LdTrue
+	5: Pack[3](Simple)
+	6: MoveLoc[1](loc0: &mut Simple)
+	7: WriteRef
+	8: Ret
 }
 entry public main(Arg0: &signer) {
 B0:

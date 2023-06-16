@@ -2,7 +2,7 @@ module deploy_address::struct_has_key {
 
 	use std::signer;
 
-	struct Simple has key, store, copy {
+	struct Simple has key, store, copy, drop {
 		f: u64,
 		g: bool
 	}
@@ -57,9 +57,31 @@ module deploy_address::struct_has_key {
 
 	public fun borrow1(account: address ): u64 acquires Simple {
 		let s1 = borrow_global_mut<Simple>(account);
-		// TODO: provare a fare una borrow con un tipo definito in un altro modulo
-		s1.f = s1.f + 1;
+		s1.f = s1.f + 2;
 		s1.f
+	}
+
+	public fun borrow2(account: address ): u64 acquires Simple {
+		let s1 = borrow_global_mut<Simple>(account);
+		// TODO: provare a fare una borrow con un tipo definito in un altro modulo
+		let u = &mut s1.f;
+		*u = *u;
+		*u = *u + 2;
+		let z = u;
+		*z
+	}
+
+	public fun borrow3(account: address ): u64 acquires Nested3 {
+		let s1 = borrow_global<Nested3>(account);
+		let s2: &Simple = &s1.a;		
+		let n = s1.b;
+		let m: &u64 = &n;
+		(*s2).f + *m
+	}
+
+	public fun borrow4(account: address ) acquires Simple {
+		let s1 = borrow_global_mut<Simple>(account);
+		*s1 = Simple { f: 1, g: true };
 	}
 
 	// TODO: provare anche la move_from 

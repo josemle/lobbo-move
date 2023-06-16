@@ -84,20 +84,87 @@ moveto2:
 borrow1:
 	   proto 1 1
 	   load 0
-	0: frame_dig -1
-	1: // l'account algorand è un address; ed in move convertiamo &signer in address
-	   bytec_3	// oppure un pushbytes "Simple"
-	   app_local_get
-	   // TODO: fare la deserializzazione
+	0: 
+	   // l'account algorand è un address; ed in move convertiamo &signer in address
+	   // trattiamo tutto come address, cioè come byte[] di lunghezza fissa 32 byte
+	   frame_dig -1	// Arg0: address = byte[] di lunghezza fissa 32 byte
+	1: 
+	   pushbytes 0x00 0x03
+	   swap
+	   concat	// 0x00 0x03 Arg0 (34 byte totali)
 	2: store 0
 	3: load 0
-	4: ImmBorrowField[0](Simple.f: u64)
-	5: ReadRef
-	6: LdU64(1)
-	7: Add
-	8: CopyLoc[1](loc0: &mut Simple)
-	9: MutBorrowField[0](Simple.f: u64)
+	4: 
+	   pushbytes 0x01
+	   replace2 0 // 0x01 0x03 Arg0 (34 byte totali)
+	   pushbytes 0x0000 0x0008
+	   concat // 0x01 0x03 Arg0 0x0000 0x0008 (38 byte totali)
+
+	   // i pointer sono di 3 tipologie ed hanno sempre informazioni fixed-size
+	   // il formato dei pointer è il seguente, con esempi:
+	   //
+	   // pointer type 0: pointer a struct (BorrowGlobal)
+	   // type(1)  key(1)  addr(32)  (34 byte totali)
+	   // 0x00     0x03    Arg0
+	   //
+	   // pointer type 1: pointer a field (BorrowField)
+	   // type(1)  key(1)  addr(32)  offset(2)  len(2) (38 byte totali)
+	   // 0x01     0x03    Arg0      0x0014     0x1234
+	   //
+	   // pointer type 2: pointer a local (BorrowLoc)
+	   // type(1)  index(1) (2 byte totali)
+	   // 0x02     0x14 
+	5: 
+	   // ReadRef starts
+	   dup
+	   extract 0 1   // pointer type (1 byte)
+	   btoi	// fa il padding quando non è 64 bit
+	   switch 5_pt0 5_pt1 5_pt2
+	5_pt0:  // pointer type 0x00 = pointer to struct
+	   dup
+	   extract 2 32  // address (32 byte)
+	   swap
+	   extract 1 1   // key = struct number (1 byte)
+	   app_local_get 
+	   b 5_exit
+	5_pt1:	// pointer type 0x01 = pointer to struct field
+	   dupn 3
+	   extract 2 32  // address (32 byte)
+	   swap
+	   extract 1 1   // key = struct number (1 byte)
+	   app_local_get 
+	   swap
+	   extract 33 2  // field offset (2 byte)
+	   btoi			 // converte in uint64 facendo padding da 2 a 8 byte
+	   uncover 2
+	   extract 35 2  // field len (2 byte)
+	   btoi			 // converte in uint64 facendo padding da 2 a 8 byte
+	   extract3
+	   b 5_exit
+	5_pt2:    // pointer type 0x02 = pointer to local variable
+	   extract 1 1
+	   btoi  // converte in uint64 facendo padding da 1 a 8 byte
+	   loads
+	   b 5_exit
+	5_exit: // ReadRef ends
+	   // TODO: rendere il codice della ReadRef una subroutine
+	   // TODO: capire se la ReadRef tradotta così funziona con nested struct
+
+	6: pushint 2
+	7: +
+	8: load 0
+	9: 
+	   pushbytes 0x01
+	   replace2 0 // 0x01 0x03 Arg0 (34 byte totali)
+	   pushbytes 0x0000 0x0008
+	   concat // 0x01 0x03 Arg0 0x0000 0x0008 (38 byte totali)
+	
 	10: WriteRef
+	    // TODO: in base al pointer type, circa stesso pattern della ReadRef
+		// se 0x00: fa una app_local_put
+		// se 0x01: fa una app_local_get, modifica il campo e fa una app_local_put
+		// se 0x02: fa una store
+
 	11: MoveLoc[1](loc0: &mut Simple)
 	12: ImmBorrowField[0](Simple.f: u64)
 	13: ReadRef
