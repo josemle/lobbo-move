@@ -1,6 +1,6 @@
 module deploy_address::struct_has_key {
 
-	use std::signer;
+	//use std::signer;
 
 	struct Simple has key, store, copy, drop {
 		f: u64,
@@ -34,11 +34,6 @@ module deploy_address::struct_has_key {
 		let n = 5;
 		let s1 = Simple { f: n, g: false };
 		let s2 = Nested1 { a: s1, b: 78 };
-		let n1 = s1.f + s2.b;
-		while (n1 < 100) {
-			n1 = n1+1;
-		};
-		let s3 = Simple { f: n, g: true };
 		move_to(account, s2);
 		move_to(account, s3);
 	}
@@ -56,8 +51,8 @@ module deploy_address::struct_has_key {
 		let n = 5;
 		let s1 = Simple { f: n, g: false };
 		let s2 = Nested3 { a: s1, b: 88, c: s1 };
-		let addr = signer::address_of(account);
-		let addr2 = *signer::borrow_address(account);
+		//let addr = signer::address_of(account);
+		//let addr2 = *signer::borrow_address(account);
 		move_to(account, s2);
 	}
 
