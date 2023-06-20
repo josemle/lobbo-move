@@ -1,5 +1,5 @@
 // Move bytecode v6
-module f77304f0b8426e09de5799104bfbc0a0efbbdaef95b5c172fb93522a19d5ee9e.struct_has_key {
+module 221e04878647f87928e83d1a0f0ec826a40364527027dca5a940d6ae95e8fdf1.struct_has_key {
 use 0000000000000000000000000000000000000000000000000000000000000001::signer;
 
 
@@ -100,6 +100,45 @@ B0:
 	7: WriteRef
 	8: Ret
 }
+public borrow5(Arg0: address): bool {
+L0:	loc1: &mut Simple
+L1:	loc2: &mut Nested1
+L2:	loc3: &mut Nested3
+B0:
+	0: CopyLoc[0](Arg0: address)
+	1: MutBorrowGlobal[3](Simple)
+	2: StLoc[2](loc1: &mut Simple)
+	3: CopyLoc[0](Arg0: address)
+	4: MutBorrowGlobal[0](Nested1)
+	5: StLoc[3](loc2: &mut Nested1)
+	6: MoveLoc[0](Arg0: address)
+	7: MutBorrowGlobal[2](Nested3)
+	8: StLoc[4](loc3: &mut Nested3)
+	9: MoveLoc[2](loc1: &mut Simple)
+	10: ImmBorrowField[0](Simple.f: u64)
+	11: ReadRef
+	12: MoveLoc[3](loc2: &mut Nested1)
+	13: ImmBorrowField[3](Nested1.b: u64)
+	14: ReadRef
+	15: Add
+	16: MoveLoc[4](loc3: &mut Nested3)
+	17: ImmBorrowField[2](Nested3.b: u64)
+	18: ReadRef
+	19: Add
+	20: LdU64(100)
+	21: Lt
+	22: BrFalse(26)
+B1:
+	23: LdTrue
+	24: StLoc[1](loc0: bool)
+	25: Branch(28)
+B2:
+	26: LdFalse
+	27: StLoc[1](loc0: bool)
+B3:
+	28: MoveLoc[1](loc0: bool)
+	29: Ret
+}
 entry public main(Arg0: &signer) {
 B0:
 	0: CopyLoc[0](Arg0: &signer)
@@ -108,9 +147,9 @@ B0:
 	3: Call moveto2(&signer)
 	4: Ret
 }
-public moveto1(Arg0: &signer, Arg1: u64) {
+public moveto1(Arg0: signer, Arg1: u64) {
 B0:
-	0: MoveLoc[0](Arg0: &signer)
+	0: ImmBorrowLoc[0](Arg0: signer)
 	1: MoveLoc[1](Arg1: u64)
 	2: LdU64(39)
 	3: Add
@@ -120,15 +159,54 @@ B0:
 	7: Ret
 }
 public moveto2(Arg0: &signer) {
+L0:	loc1: u64
+L1:	loc2: Simple
+L2:	loc3: Nested1
+L3:	loc4: Simple
 B0:
-	0: MoveLoc[0](Arg0: &signer)
-	1: LdU64(5)
-	2: LdFalse
-	3: Pack[3](Simple)
-	4: LdU64(78)
-	5: Pack[0](Nested1)
-	6: MoveTo[0](Nested1)
-	7: Ret
+	0: LdU64(5)
+	1: StLoc[1](loc0: u64)
+	2: CopyLoc[1](loc0: u64)
+	3: LdFalse
+	4: Pack[3](Simple)
+	5: StLoc[3](loc2: Simple)
+	6: CopyLoc[3](loc2: Simple)
+	7: LdU64(78)
+	8: Pack[0](Nested1)
+	9: StLoc[4](loc3: Nested1)
+	10: ImmBorrowLoc[3](loc2: Simple)
+	11: ImmBorrowField[0](Simple.f: u64)
+	12: ReadRef
+	13: ImmBorrowLoc[4](loc3: Nested1)
+	14: ImmBorrowField[3](Nested1.b: u64)
+	15: ReadRef
+	16: Add
+	17: StLoc[2](loc1: u64)
+B1:
+	18: CopyLoc[2](loc1: u64)
+	19: LdU64(100)
+	20: Lt
+	21: BrFalse(28)
+B2:
+	22: Branch(23)
+B3:
+	23: MoveLoc[2](loc1: u64)
+	24: LdU64(1)
+	25: Add
+	26: StLoc[2](loc1: u64)
+	27: Branch(18)
+B4:
+	28: MoveLoc[1](loc0: u64)
+	29: LdTrue
+	30: Pack[3](Simple)
+	31: StLoc[5](loc4: Simple)
+	32: CopyLoc[0](Arg0: &signer)
+	33: MoveLoc[4](loc3: Nested1)
+	34: MoveTo[0](Nested1)
+	35: MoveLoc[0](Arg0: &signer)
+	36: MoveLoc[5](loc4: Simple)
+	37: MoveTo[3](Simple)
+	38: Ret
 }
 public moveto3(Arg0: &signer) {
 B0:

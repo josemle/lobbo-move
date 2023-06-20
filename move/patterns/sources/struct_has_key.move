@@ -24,9 +24,9 @@ module deploy_address::struct_has_key {
 	}
 
 
-	public fun moveto1(account: &signer, n: u64) {
+	public fun moveto1(account: signer, n: u64) {
 		let m = true;
-		move_to(account, Simple { f: n + 39, g: m });
+		move_to(&account, Simple { f: n + 39, g: m });
 	}
 
 
@@ -34,7 +34,13 @@ module deploy_address::struct_has_key {
 		let n = 5;
 		let s1 = Simple { f: n, g: false };
 		let s2 = Nested1 { a: s1, b: 78 };
+		let n1 = s1.f + s2.b;
+		while (n1 < 100) {
+			n1 = n1+1;
+		};
+		let s3 = Simple { f: n, g: true };
 		move_to(account, s2);
+		move_to(account, s3);
 	}
 
 	
@@ -82,6 +88,14 @@ module deploy_address::struct_has_key {
 	public fun borrow4(account: address ) acquires Simple {
 		let s1 = borrow_global_mut<Simple>(account);
 		*s1 = Simple { f: 1, g: true };
+	}
+
+	public fun borrow5(account: address ): bool acquires Simple, Nested1, Nested3 {
+		let s1 = borrow_global_mut<Simple>(account);
+		let s2 = borrow_global_mut<Nested1>(account);
+		let s3 = borrow_global_mut<Nested3>(account);
+		let n = s1.f + s2.b + s3.b;
+		if (n < 100) true else false
 	}
 
 	// TODO: provare anche la move_from 
