@@ -34,8 +34,8 @@ module deploy_address::struct_has_key {
 		let n = 5;
 		let s1 = Simple { f: n, g: false };
 		let s2 = Nested1 { a: s1, b: 78 };
+		move_to(account, s1);
 		move_to(account, s2);
-		move_to(account, s3);
 	}
 
 	
