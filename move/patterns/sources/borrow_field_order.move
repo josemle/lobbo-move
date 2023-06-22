@@ -26,13 +26,15 @@ module deploy_address::borrow_field_order {
 
 	public entry fun manipulation() {
 		let n = 5;
-		
-    let a = A { u: n, b: false };
+
+		let m: &u64 = &n;
+
+    	let a = A { u: n, b: false };
 		let b = B { u: 18, b: true };
 		
-    let c = C { x: a, y: b };
+    	let c = C { x: a, y: b };
 
-    let a_b = A { u: c.x.u + c.y.u, b: c.x.b && c.y.b };
+    	let a_b = A { u: c.x.u + c.y.u, b: c.x.b && c.y.b };
 
 		let n1 = c.y.u * a_b.u + c.x.u;
 	}
