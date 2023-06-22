@@ -1,0 +1,33 @@
+{
+    "name": "LocalStateApp",
+    "methods": [
+        {
+            "name": "set",
+            "args": [
+                {
+                    "type": "uint64",
+                    "name": "input"
+                },
+                {
+                    "type": "uint64",
+                    "name": "a"
+                },
+                {
+                    "type": "uint64",
+                    "name": "b"
+                }
+            ],
+            "returns": {
+                "type": "void"
+            }
+        },
+        {
+            "name": "get",
+            "args": [],
+            "returns": {
+                "type": "uint64"
+            }
+        }
+    ],
+    "networks": {}
+}

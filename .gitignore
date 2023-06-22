@@ -2,7 +2,7 @@
 **/.aptos
 **/.DS_Store
 **/venv
-**/artifacts
+# **/artifacts
 **/__pycache__
 
 

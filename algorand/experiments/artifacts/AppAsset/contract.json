@@ -1,0 +1,13 @@
+{
+    "name": "AppAsset",
+    "methods": [
+        {
+            "name": "create_asset",
+            "args": [],
+            "returns": {
+                "type": "uint64"
+            }
+        }
+    ],
+    "networks": {}
+}
