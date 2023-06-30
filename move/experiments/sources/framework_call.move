@@ -16,7 +16,7 @@ module deploy_address::framework_call {
 	public fun g(a: address) {
 		let _ = exists<MyRes>(a);
 		let _ = object::address_to_object<MyRes>(a);
-		let _ = borrow_global<coin::SupplyConfig>(a);
+		//let _ = borrow_global<coin::SupplyConfig>(a);
 	}
 
 
