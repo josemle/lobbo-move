@@ -8,23 +8,23 @@ module deploy_address::references {
 		*x + 4
 	}
 
-  fun g(x: &mut u64) {
+    fun g(x: &mut u64) {
 		*x = *x + 4
 	}
 
 	public entry fun imm_call() {
-		let x = 1;
-		x = f(&x);
+		let _x = 1;
+		_x = f(&_x);
 	}
 
-  public entry fun mut_call() {
+  	public entry fun mut_call() {
 		let x = 1;
 		g(&mut x);
 	}
 
 	public entry fun global_mut_call(addr :address) acquires Resource {
 		let res = borrow_global<Resource>(addr);
-		let foo = res.foo;
+		let _foo = res.foo;
 	}
 
 

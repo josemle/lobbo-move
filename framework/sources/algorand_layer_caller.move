@@ -11,7 +11,7 @@ module deploy_address::algorand_layer_caller {
 		let addr = @0x1;
 		let key: vector<u8> = b"Caz";
 		let s = Caz { n: 16, m: true };
-		algo4move::app_local_put_struct(addr, key, s)
+		algorand_layer::app_local_put_struct(addr, key, s)
 	}
 
 }

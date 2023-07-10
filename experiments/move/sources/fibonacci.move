@@ -15,7 +15,7 @@ module deploy_address::fibonacci {
 		else fib(n - 1) + fib(n - 2)
 	}
 
-	public fun add(x: u64, y: u64): u64 {
+	public fun add(_x: u64, _y: u64): u64 {
 		let foo = Foo { foo_field: 78 };
 		foo.foo_field
 	}

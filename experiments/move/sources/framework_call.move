@@ -1,6 +1,5 @@
 module deploy_address::framework_call {
 
-	use std::signer;
 	use aptos_framework::coin;
 	use aptos_framework::aggregator;
 	use aptos_framework::aggregator_factory;

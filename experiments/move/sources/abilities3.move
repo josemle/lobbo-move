@@ -1,6 +1,4 @@
 module deploy_address::abilities3 {
-
-	use std::signer;
 	
 	struct Coin has store {
         value: u64
