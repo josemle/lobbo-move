@@ -1,0 +1,13 @@
+{
+    "name": "SampleTrans1",
+    "methods": [
+        {
+            "name": "entry",
+            "args": [],
+            "returns": {
+                "type": "uint64"
+            }
+        }
+    ],
+    "networks": {}
+}
