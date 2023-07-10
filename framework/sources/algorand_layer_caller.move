@@ -1,6 +1,6 @@
-module deploy_address::algo4move_caller {
+module deploy_address::algorand_layer_caller {
 
-	use deploy_address::algo4move;
+	use deploy_address::algorand_layer;
 
 	struct Caz has key {
 		n: u64,

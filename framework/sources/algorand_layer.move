@@ -1,4 +1,4 @@
-module deploy_address::algo4move {
+module deploy_address::algorand_layer {
 
 
 	native public fun app_local_put_struct<T: key>(addr: address, k: vector<u8>, data: T);
