@@ -1,7 +1,5 @@
 module deploy_address::abilities {
 
-	use std::signer;
-
 	const K: u8 = 90;
 
 	struct Caz has copy {
@@ -15,14 +13,14 @@ module deploy_address::abilities {
     }
 
 	public fun clone(c: Country): Country {
-		let Country { id, population, caz: Caz { u } } = c;
+		let Country { id: _id, population, caz: Caz { u } } = c;
 		let r = Country { id: c.id, population, caz: Caz { u: u + K } };
 		destroy(c);
 		r
 	}
 
 	public fun destroy(t: Country) {
-        let Country { id, population: pop, caz: Caz { u } } = t;
+        let Country { id: _id, population: _pop, caz: Caz { u: _u } } = t;
     }
 
 	public fun main() {

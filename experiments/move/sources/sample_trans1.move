@@ -1,7 +1,5 @@
 module deploy_address::sample_trans1 {
 
-	use std::signer;
-
 	fun g(x: u64, y: u64): u64 {
 		x * y
 	}
