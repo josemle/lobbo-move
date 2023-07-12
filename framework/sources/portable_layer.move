@@ -12,7 +12,9 @@ module deploy_address::portable_layer {
         to: address,
         amount: u64,
     ) {
-		algorand_layer::itxn_pay(signer::address_of(from), to, amount);
+		// TODO fare qualche check a runtime?
+		algorand_layer::init_pay(signer::address_of(from), to, amount);
+		algorand_layer::itxn_submit();
     }
 
 	#[test_only]
