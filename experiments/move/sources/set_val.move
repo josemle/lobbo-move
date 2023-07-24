@@ -6,7 +6,7 @@ module deploy_address::set_val {
 		test_val: u64
 	}
 
-	public entry fun set_val(account: &signer, n: u64) acquires Test {
+	public entry fun set_value(account: &signer, n: u64) acquires Test {
 		let account_addr = signer::address_of(account);
 
 		if (!exists<Test>(account_addr)) {
