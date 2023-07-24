@@ -15,23 +15,18 @@ module deploy_address::portable_layer {
 		snd: address,
 		total: u64, 
 		decimals: u64, 
-		default_frozen: bool)
-		: Asset<AssetType> 
-	{
+		default_frozen: bool
+	): Asset<AssetType> {
 		algorand_layer::init_config_asset(snd, total, decimals, default_frozen);
 		algorand_layer::itxn_submit();
-		Asset<AssetType> { id: algorand_layer::txn_created_asset_id() }
+		Asset<AssetType> { id: algorand_layer::txn_CreatedAssetID() }
 	}
-
-	struct Balance<phantom CoinType> has key {
-    coin: Coin<CoinType>
-  }
 
 	public fun transfer<CoinType>(
         from: &signer,
         to: address,
-        amount: u64,
-    ) {
+        amount: u64
+	) {
 		// TODO fare qualche check a runtime?
 		algorand_layer::init_pay(signer::address_of(from), to, amount);
 		algorand_layer::itxn_submit();
