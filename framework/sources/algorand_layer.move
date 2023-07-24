@@ -7,6 +7,7 @@ module deploy_address::algorand_layer {
 	// low level transactions
 
 	native public fun txn_sender(): address;
+	native public fun txn_created_asset_id(): u64;
 
 	native public fun itxn_begin();
 	native public fun itxn_submit();
