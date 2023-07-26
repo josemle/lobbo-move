@@ -1,4 +1,4 @@
-module deploy_address::set_val {
+module deploy_address::set_get_val {
 
 	struct S has key {
 		f: u64
