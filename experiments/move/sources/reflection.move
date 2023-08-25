@@ -3,7 +3,7 @@ module deploy_address::reflection {
 	use aptos_std::type_info;
 	use aptos_std::debug::print;
 	use std::string::{String, utf8};
-  	use aptos_std::string_utils;
+  use aptos_std::string_utils;
 
 	struct Resource has key, drop {
 		value: u64,

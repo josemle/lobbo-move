@@ -23,7 +23,7 @@ module deploy_address::set_val {
 	public fun sender_can_set_val(account: signer) acquires Test {
 		let addr = signer::address_of(&account);
 		aptos_framework::account::create_account_for_test(addr);
-		set_val(&account,  4);
+		set_value(&account,  4);
 	}
 
 }

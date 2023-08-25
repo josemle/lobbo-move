@@ -1,7 +1,8 @@
 module deploy_address::highlevel_layer {
 	
 	use std::bcs;
-//	use std::signer;
+	#[test_only]
+  use std::signer;
 //	use aptos_framework::coin;
 
 	struct FakeCoin has key, store, copy, drop {

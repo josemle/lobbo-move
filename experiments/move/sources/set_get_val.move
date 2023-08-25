@@ -1,5 +1,8 @@
 module deploy_address::set_get_val {
-
+	
+	#[test_only]
+  use std::signer;
+	
 	struct S has key {
 		f: u64
 	}
@@ -15,10 +18,10 @@ module deploy_address::set_get_val {
 	}
 
 	#[test(account = @0x1)]
-	public fun sender_can_set_val(account: signer) acquires S {
+	public fun sender_can_set_val(account: signer) {
 		let addr = signer::address_of(&account);
 		aptos_framework::account::create_account_for_test(addr);
-		set_val(&account,  4);
+		set(&account,  4);
 	}
 
 }
