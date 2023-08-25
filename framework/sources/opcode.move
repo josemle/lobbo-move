@@ -30,13 +30,23 @@ module move4algo_framework::opcode {
 	native public fun itxn_field_transfer_asset_AssetSender(x: address);
 	native public fun itxn_field_transfer_asset_AssetReceiver(x: address);
 	native public fun itxn_field_transfer_asset_AssetCloseTo(x: address);	// optional
-	
 
-	// misc
+	// global instruction
+
+	native public fun global_MinTxnFee(): u64;
+	native public fun global_MinBalance(): u64;
+	native public fun global_MaxTxnLife(): u64;
+	native public fun global_GroupSize(): u64;
+	native public fun global_CurrentApplicationAddress(): address;
+	native public fun global_CurrentApplicationID(): u64;
+	native public fun global_LatestTimestamp(): u64;
+	// TODO: aggiungere gli altri
+
+	// balance
 
 	native public fun balance(acc: address): u64;
-	native public fun asset_holding_get_AssetBalance(x: address): u64;	// problema: la traduzione di questo opcode non e' banale
-	native public fun asset_holding_get_AssetFrozen(x: address): bool;
+	native public fun asset_holding_get_AssetBalance(addr: address, id: u64): u64;
+	native public fun asset_holding_get_AssetFrozen(addr: address, id: u64): bool;
 
 	// local storage
 
@@ -44,9 +54,20 @@ module move4algo_framework::opcode {
 	native public fun app_local_put_bytes(addr: address, k: vector<u8>, data: vector<u8>);
 	native public fun app_local_put_u64(addr: address, k: vector<u8>, data: u64);
 
-	native public fun app_local_get_struct<T: key>(addr: address, k: vector<u8>): T;
+	native public fun app_local_get_struct_drop<T: key + drop>(addr: address, k: vector<u8>): T;
+	native public fun app_local_get_struct<T: key>(addr: address, k: vector<u8>): &T;
 	native public fun app_local_get_bytes(addr: address, k: vector<u8>): vector<u8>;
 	native public fun app_local_get_u64(addr: address, k: vector<u8>): u64;
+
+	// global storage
+
+	native public fun app_global_put_struct<T: key>(k: vector<u8>, data: T);
+	native public fun app_global_put_bytes(k: vector<u8>, data: vector<u8>);
+	native public fun app_global_put_u64(k: vector<u8>, data: u64);
+
+	native public fun app_global_get_struct<T: key>(k: vector<u8>): T;
+	native public fun app_global_get_bytes(k: vector<u8>): vector<u8>;
+	native public fun app_global_get_u64(k: vector<u8>): u64;
 
 	// serialization
 

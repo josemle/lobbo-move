@@ -2,6 +2,7 @@ module move4algo_framework::sample_app1 {
 
 	use move4algo_framework::opcode;
 	use move4algo_framework::asset;
+	use move4algo_framework::transaction;
 	use std::string;
 
 	struct LocalStorageTest has key {
@@ -23,7 +24,7 @@ module move4algo_framework::sample_app1 {
 	struct Euro {}
 
 	public fun test_asset_transfer() {
-		let asset = asset::create<Euro>(10000, 2, false, string::utf8(b"Euro"), string::utf8(b"EUR"));
+		let asset = asset::create<Euro>(transaction::get_sender(), 10000, 2, false, string::utf8(b"Euro"), string::utf8(b"EUR"));
 		let asset2 = asset::transfer(@0x1, asset, 100);
 		let asset3 = asset::transfer(@0x1, asset2, 500);
 		let id = asset::release(asset3);
@@ -32,13 +33,6 @@ module move4algo_framework::sample_app1 {
 		let asset4 = asset::acquire(id);
 		let asset5 = asset::transfer(@0x1, asset4, 100);
 		let _id = asset::release(asset5);
-	}
-
-	public fun test_asset_transfer2() {
-		let asset = asset::create<Euro>(10000, 2, false, string::utf8(b"Euro"), string::utf8(b"EUR"));
-		asset::transfer2(@0x1, &mut asset, 100);
-		asset::transfer2(@0x1, &mut asset, 500);
-		let _id = asset::release(asset);
 	}
 
 

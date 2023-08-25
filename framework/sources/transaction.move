@@ -68,4 +68,16 @@ module move4algo_framework::transaction {
 		op::txn_Sender()
 	}
 
+	public fun get_sender_as_signer(): signer {
+		create_signer(get_sender())
+	}
+
+	// TODO: occhio a queste due. 
+	// Al momento sono native perche' il transpiler le traduce in modo che non facciano nulla.
+	// Noi infatti non abbiamo signer in Algorand, ma solo address. 
+	// Mentre il tipo signer e' una astrazione di Move che noi supportiamo solamente perche' serve alla move_to().
+	// Ma trattiamo i signer esattamente come fossero semplici address: insomma in Algorand &signer = address
+	native fun address_of_signer(s: &signer) : address;
+	native fun create_signer(addr: address): signer;
+
 }

@@ -1,0 +1,87 @@
+module move4algo_framework::sample_app_auction {
+
+    use move4algo_framework::opcode;
+    use move4algo_framework::algos;
+    use move4algo_framework::transaction::{get_sender};
+    use move4algo_framework::asset::{Self, Asset};
+
+  // auction status codes
+  const AUCTION_LIVE: u64 = 1;
+  const AUCTION_FINISHED: u64 = 2;
+
+  // error codes
+  const EAUCTION_IS_NOT_OVER_YET: u64 = 0;
+  const EASSET_OWNER_IS_NOT_SENDER: u64 = 1;
+
+  // other constants
+  const AUCTION_GLOBAL_STORAGE_KEY: vector<u8> = b"Auction";
+
+  struct Auction has key {
+    status: u64,
+    owner: address,
+    top_bid: u64,
+    top_bidder: address,
+    deadline: u64
+  }
+
+
+  public entry fun start_auction(
+    deadline: u64,
+    starting_price: u64,
+  ) {
+    let sender = get_sender();
+    let auction = Auction {
+      status: AUCTION_LIVE,
+      owner: sender,
+      top_bid: starting_price,
+      top_bidder: sender,
+      deadline
+    };
+    opcode::app_global_put_struct(AUCTION_GLOBAL_STORAGE_KEY, auction)
+  }
+
+  // asta con algos
+
+  public fun bid(
+    amount: u64
+  ) {
+		// TODO: riprendere il filo da qua: la app_global_get non deve ritornare copie
+		// forse e' meglio che facciamo 10 primitive, 5 local e 5 global, e riscriviamo questa asta con le move_to_global e le borrow ecc
+    let auction = opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY);
+    let app = opcode::global_CurrentApplicationAddress();
+    let sender = get_sender();
+    algos::transfer(sender, app, amount);	// paga il nuovo bid
+    algos::transfer(app, auction.top_bidder, auction.top_bid);	// restituisce i soldi al vecchio bidder
+    auction.top_bid = amount;
+    auction.top_bidder = sender;
+  }
+
+  public entry fun finalize_auction() {
+    let auction = opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY);
+    assert!(opcode::global_LatestTimestamp() > auction.deadline, EAUCTION_IS_NOT_OVER_YET);
+    auction.status = AUCTION_FINISHED;
+    algos::transfer(opcode::global_CurrentApplicationAddress(), auction.owner, auction.top_bid);
+  }
+
+	// asta con asset
+
+  public fun bid_asset<AssetType>(
+    asset: Asset<AssetType>,
+    amount: u64
+  ): Asset<AssetType> {
+    let auction = opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY);
+    let app = opcode::global_CurrentApplicationAddress();
+		let sender = get_sender();
+		let id = asset::get_id(&asset);
+		assert!(sender == asset::get_owner(&asset), EASSET_OWNER_IS_NOT_SENDER);
+    let new_bidder_asset = asset::transfer(app, asset, amount);
+    let old_bidder_asset = asset::retrieve_by_id<AssetType>(id, app);
+    let _ = asset::release(asset::transfer(auction.top_bidder, old_bidder_asset, auction.top_bid));	
+    auction.top_bid = amount;
+    auction.top_bidder = sender;
+    new_bidder_asset
+  }
+
+
+
+}

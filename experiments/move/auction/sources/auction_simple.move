@@ -24,7 +24,6 @@ module resource_account_addr::auction_simple {
   }
 
   fun init_module(account: &signer) {
-    resource_account::create_resource_account
     let resource_cap = resource_account::retrieve_resource_account_cap(account, @source_addr);
     move_to(
       account,
