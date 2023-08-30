@@ -55,7 +55,7 @@ module move4algo_framework::opcode {
 	native public fun app_local_put_u64(addr: address, k: vector<u8>, data: u64);
 
 	native public fun app_local_get_struct_drop<T: key + drop>(addr: address, k: vector<u8>): T;
-	native public fun app_local_get_struct<T: key>(addr: address, k: vector<u8>): &T;
+	native public fun app_local_get_struct<T: key>(addr: address, k: vector<u8>): T;
 	native public fun app_local_get_bytes(addr: address, k: vector<u8>): vector<u8>;
 	native public fun app_local_get_u64(addr: address, k: vector<u8>): u64;
 
