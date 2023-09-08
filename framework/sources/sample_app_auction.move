@@ -84,7 +84,8 @@ module move4algo_framework::sample_app_auction {
 		assert!(sender == asset::get_owner(&asset), EASSET_OWNER_IS_NOT_SENDER);
     let new_bidder_asset = asset::transfer(app, asset, amount);
     let old_bidder_asset = asset::retrieve_by_id<AssetType>(id, app);
-    let _ = asset::release(asset::transfer(auction.top_bidder, old_bidder_asset, auction.top_bid));	
+    let old_bidder_asset = asset::transfer(auction.top_bidder, old_bidder_asset, auction.top_bid);
+    let _ = asset::release(old_bidder_asset);	
     auction.top_bid = amount;
     auction.top_bidder = sender;
     new_bidder_asset
