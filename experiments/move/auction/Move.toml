@@ -3,9 +3,9 @@ name = "Auction"
 version = "0.0.0"
 
 [addresses]
-source_addr = '_'
+source_addr = '0x12'
 # resource account
-resource_account_addr = '_'
+resource_account_addr = '0x34'
 
 [dependencies]
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "mainnet" }

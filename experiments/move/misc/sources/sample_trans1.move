@@ -8,6 +8,10 @@ module deploy_address::sample_trans1 {
 		g(x + 4, 8 + 10)
 	}
 
+	fun foo(x: u64): u64 {
+		(x + 3) * 4
+	}
+
 	public entry fun main() {
 		let x = 1;
 		f(x + 3);
