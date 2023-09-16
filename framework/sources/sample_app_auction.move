@@ -16,7 +16,7 @@ module move4algo_framework::sample_app_auction {
   // other constants
   const AUCTION_GLOBAL_STORAGE_KEY: vector<u8> = b"Auction";
 
-  struct Auction has key {
+  struct Auction has key, drop {
     status: u64,
     owner: address,
     top_bid: u64,
@@ -24,6 +24,13 @@ module move4algo_framework::sample_app_auction {
     deadline: u64
   }
 
+  fun get_state(): Auction {
+    opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY)
+  }
+
+  fun set_state(a: Auction) {
+    opcode::app_global_put_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY, a)
+  }
 
   public entry fun start_auction(
     deadline: u64,
@@ -37,7 +44,7 @@ module move4algo_framework::sample_app_auction {
       top_bidder: sender,
       deadline
     };
-    opcode::app_global_put_struct(AUCTION_GLOBAL_STORAGE_KEY, auction)
+    set_state(auction);
   }
 
   // asta con algos
@@ -47,20 +54,21 @@ module move4algo_framework::sample_app_auction {
   ) {
 		// TODO: riprendere il filo da qua: la app_global_get non deve ritornare copie
 		// forse e' meglio che facciamo 10 primitive, 5 local e 5 global, e riscriviamo questa asta con le move_to_global e le borrow ecc
-    let auction = opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY);
+    let auction = get_state();
     let app = opcode::global_CurrentApplicationAddress();
     let sender = get_sender();
     algos::transfer(sender, app, amount);	// paga il nuovo bid
     algos::transfer(app, auction.top_bidder, auction.top_bid);	// restituisce i soldi al vecchio bidder
     auction.top_bid = amount;
     auction.top_bidder = sender;
+    set_state(auction);
   }
 
   public entry fun finalize_auction() {
     let auction = opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY);
     assert!(opcode::global_LatestTimestamp() > auction.deadline, EAUCTION_IS_NOT_OVER_YET);
     auction.status = AUCTION_FINISHED;
-    algos::transfer(opcode::global_CurrentApplicationAddress(), auction.owner, auction.top_bid);
+    algos::transfer(opcode::global_CurrentApplicationAddress(), auction.owner, auction.top_bid)
   }
 
 	// asta con asset
@@ -76,7 +84,8 @@ module move4algo_framework::sample_app_auction {
 		assert!(sender == asset::get_owner(&asset), EASSET_OWNER_IS_NOT_SENDER);
     let new_bidder_asset = asset::transfer(app, asset, amount);
     let old_bidder_asset = asset::retrieve_by_id<AssetType>(id, app);
-    let _ = asset::release(asset::transfer(auction.top_bidder, old_bidder_asset, auction.top_bid));	
+    let old_bidder_asset = asset::transfer(auction.top_bidder, old_bidder_asset, auction.top_bid);
+    let _ = asset::release(old_bidder_asset);	
     auction.top_bid = amount;
     auction.top_bidder = sender;
     new_bidder_asset
