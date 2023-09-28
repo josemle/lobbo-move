@@ -1,0 +1,10 @@
+[package]
+name = "SuiTests"
+version = "0.0.1"
+
+[addresses]
+deploy_address = '0x12'
+
+[dependencies]
+Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework/", rev = "main" }
+MoveStdlib = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/move-stdlib/", rev = "main" }
