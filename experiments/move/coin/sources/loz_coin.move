@@ -20,4 +20,8 @@ module source_addr::loz_coin {
     public entry fun transfer(sender: &signer, receiver: address, amount: u64) {
         coin::transfer<LozCoin>(sender, receiver, amount);
     }
+
+    public entry fun register(account: &signer) {
+        coin::register<LozCoin>(account);
+    }
 }
