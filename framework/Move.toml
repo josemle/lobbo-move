@@ -3,7 +3,7 @@ name = "Framework"
 version = "0.0.0"
 
 [addresses]
-move4algo_framework = "_"
+move4algo_framework = "0xaaa"
 
 [dependencies]
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "devnet" }
