@@ -23,9 +23,9 @@ module move4algo_framework::asset {
 		name: String,
 		short_name: String
 	): Asset<AssetType> {
-		transaction::init_config_asset(sender, total, decimals, default_frozen);
-		opcode::itxn_field_config_asset_Name(name);
-		opcode::itxn_field_config_asset_UnitName(short_name);
+		transaction::init_asset_config(sender, total, decimals, default_frozen);
+		opcode::itxn_field_Name(name);
+		opcode::itxn_field_UnitName(short_name);
 		transaction::submit();
 		Asset<AssetType> { id: opcode::txn_CreatedAssetID(), amount: total, owner: sender }
 	}
@@ -36,7 +36,7 @@ module move4algo_framework::asset {
 		amount: u64
 	): Asset<AssetType> {
 		let Asset { id, amount: old_amount, owner } = asset;
-		transaction::transfer_asset(id, amount, owner, receiver);
+		transaction::asset_transfer(id, amount, owner, receiver);
 		Asset<AssetType> { id, amount: old_amount - amount, owner }
 	}
 

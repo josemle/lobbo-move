@@ -19,17 +19,17 @@ module move4algo_framework::opcode {
 	native public fun itxn_field_GenesisID(x: String);	// optional
 	native public fun itxn_field_Amount(x: u64);
 	// asset config and params
-	native public fun itxn_field_config_asset_Total(x: u64);
-	native public fun itxn_field_config_asset_Decimals(x: u64);
-	native public fun itxn_field_config_asset_DefaultFrozen(x: bool);
-	native public fun itxn_field_config_asset_UnitName(x: String);	// optional
-	native public fun itxn_field_config_asset_Name(x: String);	// optional
+	native public fun itxn_field_Total(x: u64);
+	native public fun itxn_field_Decimals(x: u64);
+	native public fun itxn_field_DefaultFrozen(x: bool);
+	native public fun itxn_field_UnitName(x: String);	// optional
+	native public fun itxn_field_Name(x: String);	// optional
 	// asset transfer
-	native public fun itxn_field_transfer_asset_XferAsset(x: u64);
-	native public fun itxn_field_transfer_asset_AssetAmount(x: u64);
-	native public fun itxn_field_transfer_asset_AssetSender(x: address);
-	native public fun itxn_field_transfer_asset_AssetReceiver(x: address);
-	native public fun itxn_field_transfer_asset_AssetCloseTo(x: address);	// optional
+	native public fun itxn_field_XferAsset(x: u64);
+	native public fun itxn_field_AssetAmount(x: u64);
+	native public fun itxn_field_AssetSender(x: address);
+	native public fun itxn_field_AssetReceiver(x: address);
+	native public fun itxn_field_AssetCloseTo(x: address);	// optional
 
 	// global instruction
 
@@ -50,22 +50,22 @@ module move4algo_framework::opcode {
 
 	// local storage
 
-	native public fun app_local_put_struct<T: key>(addr: address, k: vector<u8>, data: T);
+	native public fun app_local_put<T: key>(addr: address, k: vector<u8>, data: T);
 	native public fun app_local_put_bytes(addr: address, k: vector<u8>, data: vector<u8>);
 	native public fun app_local_put_u64(addr: address, k: vector<u8>, data: u64);
 
-	native public fun app_local_get_struct_drop<T: key + drop>(addr: address, k: vector<u8>): T;
-	native public fun app_local_get_struct<T: key>(addr: address, k: vector<u8>): T;
+	//native public fun app_local_get_drop<T: key + drop>(addr: address, k: vector<u8>): T;
+	native public fun app_local_get<T: key>(addr: address, k: vector<u8>): T;
 	native public fun app_local_get_bytes(addr: address, k: vector<u8>): vector<u8>;
 	native public fun app_local_get_u64(addr: address, k: vector<u8>): u64;
 
 	// global storage
 
-	native public fun app_global_put_struct<T: key>(k: vector<u8>, data: T);
+	native public fun app_global_put<T: key>(k: vector<u8>, data: T);
 	native public fun app_global_put_bytes(k: vector<u8>, data: vector<u8>);
 	native public fun app_global_put_u64(k: vector<u8>, data: u64);
 
-	native public fun app_global_get_struct<T: key>(k: vector<u8>): T;
+	native public fun app_global_get<T: key>(k: vector<u8>): T;
 	native public fun app_global_get_bytes(k: vector<u8>): vector<u8>;
 	native public fun app_global_get_u64(k: vector<u8>): u64;
 
