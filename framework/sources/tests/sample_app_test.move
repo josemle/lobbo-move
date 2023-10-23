@@ -14,17 +14,18 @@ module move4algo_framework::sample_app1 {
 		let addr = @0x1;
 		let key: vector<u8> = b"LocalStorageTest";
 		let s = LocalStorageTest { n: 16, m: true };
-		opcode::app_local_put_struct(addr, key, s);
+		opcode::app_local_put(addr, key, s);
 
-		let s2 = opcode::app_local_get_struct<LocalStorageTest>(addr, key);
+		let s2 = opcode::app_local_get<LocalStorageTest>(addr, key);
 		s2.n = s2.n + 1;
-		opcode::app_local_put_struct(addr, key, s2);
+		opcode::app_local_put(addr, key, s2);
 	}
 
 	struct Euro {}
 
 	public fun test_asset_transfer() {
-		let asset = asset::create<Euro>(transaction::get_sender(), 10000, 2, false, string::utf8(b"Euro"), string::utf8(b"EUR"));
+		let sender = transaction::get_sender();
+		let asset = asset::create<Euro>(sender, 10000, 2, false, string::utf8(b"Euro"), string::utf8(b"EUR"));
 		let asset2 = asset::transfer(@0x1, asset, 100);
 		let asset3 = asset::transfer(@0x1, asset2, 500);
 		let id = asset::release(asset3);

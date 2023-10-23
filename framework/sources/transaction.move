@@ -2,6 +2,7 @@
 module move4algo_framework::transaction {
 
 	use std::string::{String, utf8};
+	use std::option::{Self};
 	use move4algo_framework::opcode as op;
 
 	const DEFAULT_FEE: u64 = 1000;
@@ -23,19 +24,17 @@ module move4algo_framework::transaction {
 		op::itxn_field_Amount(amount);
 	}
 
-	public fun init_config_asset(sender: address, total: u64, decimals: u64, default_frozen: bool) {
+	public fun init_asset_config(sender: address, total: u64, decimals: u64, default_frozen: bool) {
 		init_header(DEFAULT_FEE, utf8(b"acfg"), sender);
-		op::itxn_field_config_asset_Total(total);
-		op::itxn_field_config_asset_Decimals(decimals);
-		op::itxn_field_config_asset_DefaultFrozen(default_frozen);
+		op::itxn_field_Total(total);
+		op::itxn_field_Decimals(decimals);
+		op::itxn_field_DefaultFrozen(default_frozen);
 	}
 
-	public fun init_transfer_asset(id: u64, amount: u64, sender: address, receiver: address) {
+	public fun init_asset_transfer(id: u64, sender: address, receiver: address) {
 		init_header(DEFAULT_FEE, utf8(b"axfer"), sender);
-		op::itxn_field_transfer_asset_XferAsset(id);
-		op::itxn_field_transfer_asset_AssetAmount(amount);
-		op::itxn_field_transfer_asset_AssetSender(@0x0);
-		op::itxn_field_transfer_asset_AssetReceiver(receiver);
+		op::itxn_field_XferAsset(id);
+		op::itxn_field_AssetReceiver(receiver);
 	}
 
 
@@ -45,18 +44,26 @@ module move4algo_framework::transaction {
 
 	public fun pay(sender: address, receiver: address, amount: u64) {
 		init_pay(sender, receiver, amount);
-		op::itxn_submit();
+		submit();
 	}
 
-	public fun config_asset(sender: address, total: u64, decimals: u64, default_frozen: bool) {
-		init_config_asset(sender, total, decimals, default_frozen);
-		op::itxn_submit();
+	public fun asset_config(sender: address, total: u64, decimals: u64, default_frozen: bool) {
+		init_asset_config(sender, total, decimals, default_frozen);
+		submit();
 	}
 
-	public fun transfer_asset(id: u64, amount: u64, sender: address, receiver: address) {
-		init_transfer_asset(id, amount, sender, receiver);
-		op::itxn_submit();
+	public fun asset_transfer(id: u64, amount: u64, sender: address, receiver: address) {
+		init_asset_transfer(id, sender, receiver);
+		op::itxn_field_AssetSender(@0x0);	// address 0 when normal transfer between accounts (see Algorand doc) 
+		op::itxn_field_AssetAmount(amount);
+		submit();
 	}
+
+	public fun asset_optin(id: u64, sender: address, receiver: address) {
+		init_asset_transfer(id, sender, receiver);
+		submit();
+	}
+
 
 	// stubs
 

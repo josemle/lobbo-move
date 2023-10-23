@@ -25,11 +25,11 @@ module move4algo_framework::sample_app_auction {
   }
 
   fun get_state(): Auction {
-    opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY)
+    opcode::app_global_get<Auction>(AUCTION_GLOBAL_STORAGE_KEY)
   }
 
   fun set_state(a: Auction) {
-    opcode::app_global_put_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY, a)
+    opcode::app_global_put<Auction>(AUCTION_GLOBAL_STORAGE_KEY, a)
   }
 
   public entry fun start_auction(
@@ -49,7 +49,7 @@ module move4algo_framework::sample_app_auction {
 
   // asta con algos
 
-  public fun bid(
+  public fun bid_algos(
     amount: u64
   ) {
 		// TODO: riprendere il filo da qua: la app_global_get non deve ritornare copie
@@ -65,7 +65,7 @@ module move4algo_framework::sample_app_auction {
   }
 
   public entry fun finalize_auction() {
-    let auction = opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY);
+    let auction = get_state();
     assert!(opcode::global_LatestTimestamp() > auction.deadline, EAUCTION_IS_NOT_OVER_YET);
     auction.status = AUCTION_FINISHED;
     algos::transfer(opcode::global_CurrentApplicationAddress(), auction.owner, auction.top_bid)
@@ -77,7 +77,7 @@ module move4algo_framework::sample_app_auction {
     asset: Asset<AssetType>,
     amount: u64
   ): Asset<AssetType> {
-    let auction = opcode::app_global_get_struct<Auction>(AUCTION_GLOBAL_STORAGE_KEY);
+    let auction = get_state();
     let app = opcode::global_CurrentApplicationAddress();
 		let sender = get_sender();
 		let id = asset::get_id(&asset);
