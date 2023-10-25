@@ -1,9 +1,8 @@
 
-module move4algo_framework::transaction {
+module algomove::transaction {
 
 	use std::string::{String, utf8};
-	use std::option::{Self};
-	use move4algo_framework::opcode as op;
+	use algomove::opcode as op;
 
 	const DEFAULT_FEE: u64 = 1000;
 

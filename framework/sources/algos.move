@@ -1,7 +1,7 @@
-module move4algo_framework::algos {
+module algomove::algos {
 
-	use move4algo_framework::opcode;
-	use move4algo_framework::transaction;
+	use algomove::opcode;
+	use algomove::transaction;
 
 	struct Algos has store {
 		from: address,

@@ -1,4 +1,4 @@
-module move4algo_framework::opcode {
+module algomove::opcode {
 
 	use std::string::{String};
 

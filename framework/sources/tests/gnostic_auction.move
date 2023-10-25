@@ -1,9 +1,9 @@
-module move4algo_framework::sample_app_auction {
+module algomove::gnostic_auction {
 
-    use move4algo_framework::opcode;
-    use move4algo_framework::algos;
-    use move4algo_framework::transaction::{get_sender};
-    use move4algo_framework::asset::{Self, Asset};
+  use algomove::opcode;
+  use algomove::algos;
+  use algomove::transaction::{get_sender};
+  use algomove::asset::{Self, Asset};
 
   // auction status codes
   const AUCTION_LIVE: u64 = 1;

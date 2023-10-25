@@ -1,7 +1,7 @@
-module move4algo_framework::asset {
+module algomove::asset {
 
-	use move4algo_framework::opcode;
-	use move4algo_framework::transaction;
+	use algomove::opcode as op;
+	use algomove::transaction as txn;
 	use std::string::{String};
 
 	struct Handle<phantom AssetType> has copy, drop {
@@ -23,11 +23,11 @@ module move4algo_framework::asset {
 		name: String,
 		short_name: String
 	): Asset<AssetType> {
-		transaction::init_asset_config(sender, total, decimals, default_frozen);
-		opcode::itxn_field_Name(name);
-		opcode::itxn_field_UnitName(short_name);
-		transaction::submit();
-		Asset<AssetType> { id: opcode::txn_CreatedAssetID(), amount: total, owner: sender }
+		txn::init_asset_config(sender, total, decimals, default_frozen);
+		op::itxn_field_Name(name);
+		op::itxn_field_UnitName(short_name);
+		txn::submit();
+		Asset<AssetType> { id: op::txn_CreatedAssetID(), amount: total, owner: sender }
 	}
 
 	public fun transfer<AssetType>(
@@ -36,7 +36,7 @@ module move4algo_framework::asset {
 		amount: u64
 	): Asset<AssetType> {
 		let Asset { id, amount: old_amount, owner } = asset;
-		transaction::asset_transfer(id, amount, owner, receiver);
+		txn::asset_transfer(id, amount, owner, receiver);
 		Asset<AssetType> { id, amount: old_amount - amount, owner }
 	}
 
@@ -46,7 +46,7 @@ module move4algo_framework::asset {
 	}
 
 	public fun acquire<AssetType>(h: Handle<AssetType>): Asset<AssetType> {
-		Asset<AssetType> { id: h.id, amount: opcode::asset_holding_get_AssetBalance(h.owner, h.id), owner: h.owner }
+		Asset<AssetType> { id: h.id, amount: op::asset_holding_get_AssetBalance(h.owner, h.id), owner: h.owner }
 	}
 
 	public fun retrieve_by_id<AssetType>(

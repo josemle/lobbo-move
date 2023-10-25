@@ -1,4 +1,4 @@
-module move4algo_framework::agnostic_auction {
+module algomove::agnostic_auction {
 
   use std::signer;
 
@@ -34,6 +34,5 @@ module move4algo_framework::agnostic_auction {
     auction.expired = true;
     auction.top_bidder
   }
-
 
 }

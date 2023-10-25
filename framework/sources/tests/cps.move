@@ -1,8 +1,8 @@
-module move4algo_framework::sample_app1 {
+module algomove::cps {
 
-	use move4algo_framework::opcode;
-	use move4algo_framework::asset;
-	use move4algo_framework::transaction;
+	use algomove::opcode;
+	use algomove::asset;
+	use algomove::transaction;
 	use std::string;
 
 	struct LocalStorageTest has key {
