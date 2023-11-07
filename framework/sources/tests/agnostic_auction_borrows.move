@@ -23,7 +23,7 @@ module algomove::agnostic_auction_paper_borrows {
     move_to(auctioneer, auction)
   }
 
-  public fun bid<CoinType>(acc: &signer, auctioneer_addr: address, coins: Coin<CoinType>) acquires Auction {
+/*  public fun bid<CoinType>(acc: &signer, auctioneer_addr: address, coins: Coin<CoinType>) acquires Auction {
     let Auction { auctioneer, top_bid, top_bidder, expired } = borrow_global_mut<Auction<CoinType>>(auctioneer_addr);
     assert!(!*expired, 1);
     assert!(coin::value(&coins) > coin::value(top_bid), 2);
@@ -37,7 +37,7 @@ module algomove::agnostic_auction_paper_borrows {
     let auction = borrow_global_mut<Auction<CoinType>>(auctioneer_addr);
     assert!(auctioneer_addr == auction.auctioneer, 3);
     auction.expired = true;
-  }
+  }*/
 
 
 }

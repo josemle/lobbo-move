@@ -24,13 +24,15 @@ module algomove::agnostic_auction_paper_movefrom {
     move_to(auctioneer, auction)
   }
 
-  public fun bid<CoinType>(acc: &signer, auctioneer_addr: address, coins: Coin<CoinType>) acquires Auction {
-    let Auction { auctioneer, top_bid, top_bidder, expired } = move_from<Auction<CoinType>>(auctioneer_addr);
+  public fun bid<CoinType>(acc: &signer, top_bidder_addr: address, coins: Coin<CoinType>): address acquires Auction {
+    let Auction { auctioneer, top_bid, top_bidder, expired } = move_from<Auction<CoinType>>(top_bidder_addr);
+    assert!(top_bidder_addr == top_bidder, 0);
     assert!(!expired, 1);
     assert!(coin::value(&coins) > coin::value(&top_bid), 2);
     coin::deposit(top_bidder, top_bid);
-    coin::deposit(auctioneer_addr, coins);
-    move_to(acc, Auction { auctioneer, top_bid: coins, top_bidder: signer::address_of(acc), expired });
+    let new_top_bidder = signer::address_of(acc);
+    move_to(acc, Auction { auctioneer, top_bid: coins, top_bidder: new_top_bidder, expired });
+    new_top_bidder
   }
     
   public fun finalize_auction<CoinType>(auctioneer: &signer) acquires Auction {
