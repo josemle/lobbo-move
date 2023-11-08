@@ -1,4 +1,4 @@
-module algomove::gnostic_auction {
+module algomove::algomove_auction_cps {
 
   use algomove::opcode;
   use algomove::algos;

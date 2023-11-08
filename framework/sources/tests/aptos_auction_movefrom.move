@@ -1,5 +1,6 @@
 
-module algomove::agnostic_auction_paper_borrows {
+
+module algomove::aptos_auction_paper_movefrom {
 
   use std::signer;
   use aptos_std::coin::{Self,Coin};
@@ -23,13 +24,15 @@ module algomove::agnostic_auction_paper_borrows {
     move_to(auctioneer, auction)
   }
 
-/*  public fun bid<CoinType>(acc: &signer, auctioneer_addr: address, coins: Coin<CoinType>) acquires Auction {
-    let Auction { auctioneer, top_bid, top_bidder, expired } = borrow_global_mut<Auction<CoinType>>(auctioneer_addr);
-    assert!(!*expired, 1);
-    assert!(coin::value(&coins) > coin::value(top_bid), 2);
-    coin::deposit(*top_bidder, top_bid);
-    top_bidder = signer::address_of(acc);
-    top_bid = coins;
+  public fun bid<CoinType>(acc: &signer, top_bidder_addr: address, coins: Coin<CoinType>): address acquires Auction {
+    let Auction { auctioneer, top_bid, top_bidder, expired } = move_from<Auction<CoinType>>(top_bidder_addr);
+    assert!(top_bidder_addr == top_bidder, 0);
+    assert!(!expired, 1);
+    assert!(coin::value(&coins) > coin::value(&top_bid), 2);
+    coin::deposit(top_bidder, top_bid);
+    let new_top_bidder = signer::address_of(acc);
+    move_to(acc, Auction { auctioneer, top_bid: coins, top_bidder: new_top_bidder, expired });
+    new_top_bidder
   }
     
   public fun finalize_auction<CoinType>(auctioneer: &signer) acquires Auction {
@@ -37,7 +40,6 @@ module algomove::agnostic_auction_paper_borrows {
     let auction = borrow_global_mut<Auction<CoinType>>(auctioneer_addr);
     assert!(auctioneer_addr == auction.auctioneer, 3);
     auction.expired = true;
-  }*/
-
+  }
 
 }

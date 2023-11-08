@@ -1,7 +1,8 @@
-module algomove::agnostic_auction_paper_simple {
+
+module algomove::aptos_auction_hybrid {
 
   use std::signer;
-  use aptos_std::coin;
+  use aptos_std::coin::{Self,Coin};
 
   struct Auction has key {
     auctioneer: address,
@@ -22,25 +23,24 @@ module algomove::agnostic_auction_paper_simple {
     move_to(auctioneer, auction)
   }
 
-  public entry fun bid(acc: &signer, auctioneer_addr: address, amount:u64) acquires Auction {
+  public fun bid<CoinType>(acc: &signer, auctioneer_addr: address, coins: Coin<CoinType>) acquires Auction {
     let auction = borrow_global_mut<Auction>(auctioneer_addr);
+    let coin_amount = coin::value(&coins);
     assert!(!auction.expired, 1);
-    assert!(amount > auction.top_bid, 2);
-    auction.top_bid = amount;
+    assert!(coin_amount > auction.top_bid, 2);
+    // Lore, guarda qua: non riesco a fare la withdraw perche devo avere il signer
+    //let refund = coin::withdraw<CoinType>(auctioneer_addr, auction.top_bid);
+    //coin::deposit(auction.top_bidder, refund);
+    coin::deposit(auctioneer_addr, coins);
+    auction.top_bid = coin_amount;
     auction.top_bidder = signer::address_of(acc);
   }
     
-  public entry fun finalize_auction(auctioneer: &signer) acquires Auction {
+  public fun finalize_auction(auctioneer: &signer) acquires Auction {
     let auctioneer_addr = signer::address_of(auctioneer);
     let auction = borrow_global_mut<Auction>(auctioneer_addr);
     assert!(auctioneer_addr == auction.auctioneer, 3);
     auction.expired = true;
   }
-
-  public entry fun winner_pays<CoinType>(acc: &signer, auctioneer: address) acquires Auction {
-    let auction = borrow_global<Auction>(auctioneer);
-    assert!(auction.expired, 4);
-    assert!(auction.top_bidder == signer::address_of(acc), 5);
-    coin::transfer<CoinType>(acc, auctioneer, auction.top_bid);
-  }
 }
+
