@@ -83,7 +83,8 @@ module algomove::transaction {
 	// Noi infatti non abbiamo signer in Algorand, ma solo address. 
 	// Mentre il tipo signer e' una astrazione di Move che noi supportiamo solamente perche' serve alla move_to().
 	// Ma trattiamo i signer esattamente come fossero semplici address: insomma in Algorand &signer = address
-	native fun address_of_signer(s: &signer) : address;
-	native fun create_signer(addr: address): signer;
+	native public fun address_of_signer(s: &signer) : address;
+	native public fun create_signer(addr: address): signer;
+	native public fun bytes_of_address(a: address): vector<u8>;
 
 }
