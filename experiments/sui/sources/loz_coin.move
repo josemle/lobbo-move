@@ -1,6 +1,6 @@
 module deploy_address::loz_coin {
     use sui::tx_context::{Self, TxContext};
-    use deploy_address::simple_coin::{Self};
+    use deploy_address::simple_coin::{Self, Coin};
     #[test_only]
     use sui::test_scenario;
 
@@ -15,7 +15,7 @@ module deploy_address::loz_coin {
         simple_coin::transfer<LOZCOIN>(coins, recipient);
     }
 
-    public entry fun transfer(coins: Coin<LOZCOIN>, recipient: address, ctx: &mut TxContext) {
+    public entry fun transfer(coins: Coin<LOZCOIN>, recipient: address) {
         simple_coin::transfer<LOZCOIN>(coins, recipient);
     }
 
