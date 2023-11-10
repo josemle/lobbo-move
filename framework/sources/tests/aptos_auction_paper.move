@@ -11,7 +11,7 @@ module algomove::aptos_auction_paper_movefrom2 {
     expired: bool
   }
 
-  struct TopBid<phantom CoinType> has key {
+  struct Bid<phantom CoinType> has key {
     coins: Coin<CoinType>
   }
 
@@ -24,25 +24,25 @@ module algomove::aptos_auction_paper_movefrom2 {
         expired: false
     };
     move_to(auctioneer, auction);
-    move_to(auctioneer, TopBid { coins: base });
+    move_to(auctioneer, Bid { coins: base });
   }
 
-  public fun bid<CoinType>(acc: &signer, auctioneer: address, coins: Coin<CoinType>) acquires Auction, TopBid {
+  public fun bid<CoinType>(acc: &signer, auctioneer: address, coins: Coin<CoinType>) acquires Auction, Bid {
     let auction = borrow_global_mut<Auction>(auctioneer);
-    let TopBid { coins: top_bid } = move_from<TopBid<CoinType>>(auction.top_bidder);
+    let Bid { coins: top_bid } = move_from<Bid<CoinType>>(auction.top_bidder);
     assert!(!auction.expired, 1);
     assert!(coin::value(&coins) > coin::value(&top_bid), 2);
     coin::deposit(auction.top_bidder, top_bid);
     auction.top_bidder = signer::address_of(acc);
-    move_to(acc, TopBid { coins });
+    move_to(acc, Bid { coins });
   }
     
-  public fun finalize_auction<CoinType>(auctioneer: &signer) acquires Auction, TopBid {
+  public fun finalize_auction<CoinType>(auctioneer: &signer) acquires Auction, Bid {
     let auctioneer_addr = signer::address_of(auctioneer);
     let auction = borrow_global_mut<Auction>(auctioneer_addr);
     assert!(auctioneer_addr == auction.auctioneer, 3);
     auction.expired = true;
-    let TopBid { coins: top_bid } = move_from<TopBid<CoinType>>(auction.top_bidder);
+    let Bid { coins: top_bid } = move_from<Bid<CoinType>>(auction.top_bidder);
     coin::deposit(auctioneer_addr, top_bid);
   }
 
