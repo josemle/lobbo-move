@@ -1,4 +1,7 @@
-module resource_account_addr::auction_simple {
+module deploy_address::bet_v3 {
+    /*
+    QUESTO CODICE NON COMPILA; E' UNA BOZZA DI COME POTREBBE ESSERE IL CONTRATTO SE IMPLEMENTATO CON RESOURCE ACCOUNT
+    
     use aptos_framework::timestamp;
     use aptos_framework::signer;
     use aptos_framework::aptos_coin;
@@ -87,4 +90,5 @@ module resource_account_addr::auction_simple {
         );
         resource_signer
     }
+    */
 }
