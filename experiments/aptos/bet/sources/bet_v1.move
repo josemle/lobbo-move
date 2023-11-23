@@ -27,7 +27,7 @@ module deploy_address::bet_v1 {
     }
 
     public fun initBet(bookmaker: &signer, player1: address, player2: address, oracle: address, stake: u64, deadline: u64) {
-        let bet = OracleBet {
+        let oracleBet = OracleBet {
             player1,
             player2,
             oracle,
@@ -35,7 +35,7 @@ module deploy_address::bet_v1 {
             deadline
         };
 
-        move_to(bookmaker, bet);
+        move_to(bookmaker, oracleBet);
     }
 
     public fun join<CoinType>(partecipant: &signer, bet: Coin<CoinType>, bookmaker: address) acquires OracleBet {
