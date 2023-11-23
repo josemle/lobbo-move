@@ -38,6 +38,7 @@ contract Crowdfund {
 module deploy_address::crowdfund {
     use aptos_framework::coin::{Self, Coin};
     use aptos_framework::signer;
+    use aptos_framework::block;
 
     struct Crowdfund<phantom CoinType> has key {
         end_donate: u64,    // last block in which users can donate
@@ -64,7 +65,7 @@ module deploy_address::crowdfund {
 
     public fun donate<CoinType>(sender: &signer, crowdFundingOwner: address, donation: Coin<CoinType>) acquires Crowdfund {
         let crowdfund = borrow_global_mut<Crowdfund<CoinType>>(crowdFundingOwner);
-        // assert(block_number() <= crowdfund.end_donate);
+        assert!(block::get_current_block_height() <= crowdfund.end_donate, 0);
         let receipt = Receipt<CoinType> {
             amount: coin::value(&donation),
         };
@@ -73,9 +74,19 @@ module deploy_address::crowdfund {
 
     }
 
-    public fun withdraw<CoinType>(sender: &signer, crowdFundingOwner: address) acquires Crowdfund, Receipt {
+    public fun withdraw<CoinType>(crowdFundingOwner: address) acquires Crowdfund {
         let crowdfund = borrow_global_mut<Crowdfund<CoinType>>(crowdFundingOwner);
-        // TODO some asserts
+        assert!(block::get_current_block_height() >= crowdfund.end_donate, 0);
+        assert!(coin::value(&crowdfund.funding) >= crowdfund.goal, 0);
+        let amount = coin::value(&crowdfund.funding);
+        let funding = coin::extract(&mut crowdfund.funding, amount);
+        coin::deposit(crowdfund.receiver, funding);
+    }
+
+    public fun reclaim<CoinType>(sender: &signer, crowdFundingOwner: address) acquires Crowdfund, Receipt {
+        let crowdfund = borrow_global_mut<Crowdfund<CoinType>>(crowdFundingOwner);
+        assert!(block::get_current_block_height() >= crowdfund.end_donate, 0);
+        assert!(coin::value(&crowdfund.funding) <= crowdfund.goal, 0);
         let Receipt { amount } = move_from<Receipt<CoinType>>(signer::address_of(sender));
         let donation = coin::extract(&mut crowdfund.funding, amount);
         coin::deposit(signer::address_of(sender), donation);
