@@ -38,17 +38,17 @@ module deploy_address::bet_v1 {
         move_to(bookmaker, bet);
     }
 
-    public fun join<CoinType>(better: &signer, bet: Coin<CoinType>, bookmaker: address) acquires OracleBet {
+    public fun join<CoinType>(partecipant: &signer, bet: Coin<CoinType>, bookmaker: address) acquires OracleBet {
         // TODO: check if bet exists at bookmaker address if we do not want runtime error
         let oracleBet = borrow_global_mut<OracleBet>(bookmaker);
-        // require better address is one of the two players
-        assert!(address_of(better) == oracleBet.player1 || address_of(better) == oracleBet.player2, 0);
+        // require partecipant address is one of the two players
+        assert!(address_of(partecipant) == oracleBet.player1 || address_of(partecipant) == oracleBet.player2, 0);
         // require bet value is equal to stake
         assert!(coin::value<CoinType>(&bet) == oracleBet.stake, 0);
         // TOUNDERSTAND: maybe we should set deadline here ??
         let bet = Bet { value: bet };
 
-        move_to(better, bet);
+        move_to(partecipant, bet);
     }
 
     public fun winner<CoinType>(oracle: &signer, winner: address, bookmaker: address) acquires OracleBet, Bet {
@@ -65,8 +65,8 @@ module deploy_address::bet_v1 {
         assert!(winner == player1 || winner == player2, 0);
         let Bet { value: bet1 } = move_from<Bet<CoinType>>(player1);
         let Bet { value: bet2 } = move_from<Bet<CoinType>>(player2);
-        coin::merge(&mut bet1,bet2);
-        coin::deposit(winner, bet1 );
+        coin::merge(&mut bet1, bet2);
+        coin::deposit(winner, bet1);
     }
 
     public fun timeout<CoinType>(bookmaker: address) acquires OracleBet, Bet {
