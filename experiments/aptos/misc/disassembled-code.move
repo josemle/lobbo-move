@@ -1,52 +1,36 @@
 // Move bytecode v6
-module 12.sample_trans1 {
-
-
-f(Arg0: u64): u64 {
-B0:
-	0: MoveLoc[0](Arg0: u64)
-	1: LdU64(4)
-	2: Add
-	3: LdU64(18)
-	4: Call g(u64, u64): u64
-	5: Ret
+module 123.simple {
+struct Simple has key {
+	a: u64,
+	b: bool
 }
-foo(Arg0: u64): u64 {
+
+public f(Arg0: signer, Arg1: u64) {
 B0:
-	0: MoveLoc[0](Arg0: u64)
-	1: LdU64(3)
+	0: MoveLoc[1](Arg1: u64)
+	1: LdU64(7)
 	2: Add
-	3: LdU64(4)
-	4: Mul
-	5: Ret
+	3: LdTrue
+	4: Pack[0](Simple)
+	5: StLoc[2](loc0: Simple)
+	6: ImmBorrowLoc[0](Arg0: signer)
+	7: MoveLoc[2](loc0: Simple)
+	8: MoveTo[0](Simple)
+	9: Ret
 }
-g(Arg0: u64, Arg1: u64): u64 {
+public g(Arg0: signer) {
+B0:
+	0: MoveLoc[0](Arg0: signer)
+	1: LdU64(58)
+	2: Call h(u64): u64
+	3: Call f(signer, u64)
+	4: Ret
+}
+public h(Arg0: u64): u64 {
 B0:
 	0: MoveLoc[0](Arg0: u64)
-	1: MoveLoc[1](Arg1: u64)
-	2: Mul
+	1: LdU64(18)
+	2: Add
 	3: Ret
-}
-entry public main() {
-L0:	loc0: u64
-B0:
-	0: LdU64(1)
-	1: StLoc[0](loc0: u64)
-	2: CopyLoc[0](loc0: u64)
-	3: LdU64(3)
-	4: Add
-	5: Call f(u64): u64
-	6: Pop
-	7: CopyLoc[0](loc0: u64)
-	8: LdU64(2)
-	9: Add
-	10: Call f(u64): u64
-	11: Pop
-	12: MoveLoc[0](loc0: u64)
-	13: LdU64(1)
-	14: Add
-	15: Call f(u64): u64
-	16: Pop
-	17: Ret
 }
 }
