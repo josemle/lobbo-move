@@ -8,6 +8,11 @@ module source_addr::coin {
 
     struct MintCapability<phantom CoinType> has key {}
 
+    public fun register<CoinType>(account: &signer) {
+        let coin = Coin<CoinType> { value: 0 };
+        move_to(account, coin);
+    }
+
     public entry fun transfer<CoinType> (
         from: &signer,
         to: address,
@@ -48,10 +53,6 @@ module source_addr::coin {
         coin.value = coin.value + value;
     }
 
-    public fun register<CoinType>(account: &signer) {
-        let coin = Coin<CoinType> { value: 0 };
-        move_to(account, coin);
-    }
 
     public fun mint<CoinType>(account: &signer, amount: u64): Coin<CoinType> {
         let sender_addr = signer::address_of(account);
