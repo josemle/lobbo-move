@@ -49,7 +49,7 @@ module resource_account_addr::auction_simple {
     move_to(&resource_account_signer, auction)
   }
 
-  public fun bid(
+  public entry fun bid(
     bidder: &signer,
     coin: coin::Coin<aptos_coin::AptosCoin>
   ) acquires Auction, AccessControl {
