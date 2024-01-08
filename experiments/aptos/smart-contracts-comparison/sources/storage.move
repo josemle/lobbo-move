@@ -2,7 +2,6 @@ module deploy_address::data_storage {
     use std::vector;
     use aptos_framework::signer;
     
-
     struct DataStorage has key {
         byte_sequence: vector<u8>,
         text_string: vector<u8>
