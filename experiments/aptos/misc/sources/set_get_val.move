@@ -1,20 +1,25 @@
 module deploy_address::set_get_val {
 	
-	#[test_only]
-  use std::signer;
+  	use std::signer;
 	
 	struct S has key {
-		f: u64
+		val: u64
 	}
 
 	public fun set(acc: &signer, n: u64) {
-		let s = S { f: n };		
+		let s = S { val: n };		
 		move_to(acc, s);
 	}
 
 	public fun get(acc: address): u64 acquires S {
-		let s = borrow_global_mut<S>(acc);
-		s.f
+		let s = borrow_global<S>(acc);
+		s.val
+	}
+
+	public fun update(acc: &signer, new_val: u64) acquires S {
+		let acc_address = signer::address_of(acc);
+		let s = borrow_global_mut<S>(acc_address);
+		s.val = new_val;
 	}
 
 	#[test(account = @0x1)]
