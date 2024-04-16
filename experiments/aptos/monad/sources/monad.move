@@ -2,15 +2,20 @@ module deploy_address::monad {
 
 	use std::vector;
 
+	inline fun curry<A, B, C>(f: |A,B|C): |A|(|B|C) {
+		|x| (|y| f(x, y))
+	}
+
+
 	inline fun run<S, R>(s: S, f: |S|(R, S)): (R, S) {
 		f(s)
 	}
 
 	inline fun ret<S, R>(r: R): |S|(R, S) {
-		// servono le lambda qua
+		|s| (r, s)
 	}
 
-	inline fun bind<S, R>(f: |S|(R, S), s: |S|(R, S)): u64 {
+	inline fun bind<S, R>(f: |S|(R, S), s: |S|(R, S)) {
 		
 	}
 
