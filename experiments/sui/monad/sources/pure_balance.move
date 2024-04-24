@@ -22,4 +22,8 @@ module deploy_address::pure_balance {
         (Balance { value: amt }, Balance { value: value - amt })
     }
 
+    public fun create<T>(value: u64): Balance<T> {
+        Balance<T> { value }
+    }
+
 }

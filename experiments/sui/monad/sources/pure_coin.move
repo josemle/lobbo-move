@@ -1,6 +1,6 @@
 module deploy_address::pure_coin {
 
-    use deploy_address::pure_balance::{Balance};
+    use deploy_address::pure_balance::{Self,Balance};
 
 	public struct Coin<phantom T> has key, store {
         id: UID,
@@ -38,5 +38,23 @@ module deploy_address::pure_coin {
         let (r, bal) = take(balance, amt, ctx);
         (r, Coin { id: object::new(ctx), balance: bal })
     }
-	
+
+    public fun from_balance<T>(balance: Balance<T>, ctx: &mut TxContext): Coin<T> {
+        Coin { id: object::new(ctx), balance }
+    }
+
+    public fun into_balance<T>(coin: Coin<T>): Balance<T> {
+        let Coin { id, balance } = coin;
+        id.delete();
+        balance
+    }
+
+    // la mia mint() è fake, altrimenti dovrei ricostruire tutto l'impianto del treasury cap di Sui
+    public fun mint<T>(value: u64, ctx: &mut TxContext): Coin<T> {
+        Coin {
+            id: object::new(ctx),
+            balance: pure_balance::create<T>(value)
+        }
+    }
+
 }
