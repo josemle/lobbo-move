@@ -44,15 +44,20 @@ module deploy_address::update_test {
         }
     }
 
-    // wrapper della versione pura
-    // maniente la firma dell'originale di Sui
+    // wrapper della versione pura con reference
+    // mantiente la firma dell'originale di Sui
     // chiama la versione pura con reference non-mutable e poi fa un update
-    // attenzione: scrivere il wrapper per la versione pura senza reference e' impossibile, perché non si può de-referenziare un tipo lineare
     public entry fun do_something_pure_ref_wrapper<T>(self: &mut MySharedObject<T>, ctx: &mut TxContext) {
         let new = do_something_pure_ref(self, ctx);
         update(self, new)
     }
 
+    // wrapper della versione pura SENZA reference
+    // questa non si riesce a scrivere purtroppo mantenendo la firma originale
+    public entry fun do_something_pure_wrapper<T>(self: &mut MySharedObject<T>, ctx: &mut TxContext) {
+        let (new, old) = do_something_pure(*self, ctx); // il motivo è che non si può de-referenziare un tipo lineare in quanto non copiabile
+        update(self, new)
+    }
 
     // funzione di update
     fun update<T>(self: &mut MySharedObject<T>, new: MySharedObject<T>) {
