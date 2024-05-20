@@ -25,7 +25,4 @@ module deploy_address::lambdas {
 	}
 	
 
-	fun move_to<T: key>(acc: &signer, T x) {}
-
-
 }
