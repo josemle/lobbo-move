@@ -24,4 +24,8 @@ module deploy_address::lambdas {
 		foreach(v1, |x| print(&x));
 	}
 	
+
+	fun move_to<T: key>(acc: &signer, T x) {}
+
+
 }
