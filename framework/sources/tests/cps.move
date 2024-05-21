@@ -25,9 +25,27 @@ module algomove::cps {
 
 	public fun test_asset_transfer() {
 		let sender = transaction::get_sender();
+
+
+
 		let asset = asset::create<Euro>(sender, 10000, 2, false, string::utf8(b"Euro"), string::utf8(b"EUR"));
-		let asset2 = asset::transfer(@0x1, asset, 100);
-		let asset3 = asset::transfer(@0x1, asset2, 500);
+		let asset = asset::transfer(@0x1, asset, 100);
+		let asset = asset::transfer(@0x1, asset, 500);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		let id = asset::release(asset3);
 		
 		// riacquisisco il controllo degli asset

@@ -1,0 +1,9 @@
+[package]
+name = "Hacks"
+version = "0.0.0"
+
+[addresses]
+deploy_address = "0xf77304f0b8426e09de5799104bfbc0a0efbbdaef95b5c172fb93522a19d5ee9e"
+
+[dependencies]
+AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "devnet" }
