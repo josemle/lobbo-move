@@ -1,18 +1,23 @@
 module deploy_address::lambdas {
 
 	use std::vector;
+	use std::debug;
 
-	public fun apply(f: |u64|u64, x: u64): u64 {
+	public inline fun apply(f: |u64|u64, x: u64): u64 {
 		f(x)
 	}
 
 	public fun foo(x: u64): u64 { x * 2 }
 
-	public fun foreach<E: copy>(v: vector<E>, f: |E|) {
+	public inline fun foreach<E: copy>(v: vector<E>, f: |E|) {
 		let i = 0;
 		while (i < vector::length(&v)) {
 			f(*vector::borrow(&v, i))
 		}
+	}
+
+	public fun print(x: &u64) {
+		debug::print(x);
 	}
 
 	public fun main() {
