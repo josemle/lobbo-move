@@ -21,6 +21,13 @@ module deploy_address::loops_and_rec {
 		else fib(n - 1) + fib(n - 2)
 	}
 
+	public fun get_out(x: u64) {
+		if (x > 0) {
+			let y = x + 1;
+			return
+		}
+	}
+
 	public fun loop3(i: u64, x: u64, y: u64): (u64, u64) {
 		loop {
 			i = i - 1;
