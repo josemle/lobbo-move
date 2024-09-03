@@ -1,4 +1,4 @@
-module deploy_address::vault {
+module rosetta_smart_contracts::vault {
     use aptos_framework::coin::{Self, Coin};
     use aptos_framework::signer;
     use aptos_framework::timestamp;

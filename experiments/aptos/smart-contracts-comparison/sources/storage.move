@@ -1,4 +1,4 @@
-module deploy_address::data_storage {
+module rosetta_smart_contracts::data_storage {
     use std::vector;
     use aptos_framework::signer;
     

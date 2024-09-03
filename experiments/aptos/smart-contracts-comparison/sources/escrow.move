@@ -1,4 +1,4 @@
-module deploy_address::escrow {
+module rosetta_smart_contracts::escrow {
 
     use aptos_framework::signer;
     use aptos_framework::coin::{Self, Coin};

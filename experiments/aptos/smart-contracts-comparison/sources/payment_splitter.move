@@ -1,7 +1,4 @@
-module deploy_address::payment_splitter {
-    use aptos_framework::coin::{Self, Coin};
-    use aptos_framework::signer;
-    use aptos_framework::event;
+module rosetta_smart_contracts::payment_splitter {
     use std::vector;
 
     struct PaymentSplitter<phantom CoinType> has key {

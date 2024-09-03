@@ -38,9 +38,9 @@ contract Factory{
 */
 /*
 
-module deploy_address::product {
+module rosetta_smart_contracts::product {
 
-    friend deploy_address::factory;
+    friend rosetta_smart_contracts::factory;
 
     struct Product has key {
         tag: vector<u8>,
@@ -60,8 +60,8 @@ module deploy_address::product {
     }
 }
 
-module deploy_address::factory {
-    use deploy_address::product::{Self, Product};
+module rosetta_smart_contracts::factory {
+    use rosetta_smart_contracts::product::{Self, Product};
 
     struct Factory has key {
         products: vector<Product>,
