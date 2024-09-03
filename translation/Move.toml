@@ -1,9 +1,9 @@
 [package]
-name = "Patterns"
+name = "Translation"
 version = "0.0.0"
 
 [addresses]
-deploy_address = "_"
+deploy_address = "0xaaaa"
 
 [dependencies]
 AptosFramework = { git = "https://github.com/aptos-labs/aptos-core.git", subdir = "aptos-move/framework/aptos-framework/", rev = "devnet" }
