@@ -7,10 +7,10 @@ module algomove::transaction {
 	const DEFAULT_FEE: u64 = 1000;
 
 	// transaction initializers
-	//   - require an explicit submit() call afterwards
+	//   - require an explicit op::itxn_submit() call afterwards
 	//   - users can add fields using proper opcodes
 
-	public fun init_header(fee: u64, ty: String, sender: address) {
+	public fun init_header(sender: address, fee: u64, ty: String) {
 		op::itxn_begin();
 		op::itxn_field_Fee(fee);
 		op::itxn_field_Type(ty);
@@ -18,73 +18,73 @@ module algomove::transaction {
 	}
 
 	public fun init_pay(sender: address, receiver: address, amount: u64) {
-		init_header(DEFAULT_FEE, utf8(b"pay"), sender);
+		init_header(sender, DEFAULT_FEE, utf8(b"pay"));
 		op::itxn_field_Receiver(receiver);
 		op::itxn_field_Amount(amount);
 	}
 
 	public fun init_asset_config(sender: address, total: u64, decimals: u64, default_frozen: bool) {
-		init_header(DEFAULT_FEE, utf8(b"acfg"), sender);
+		init_header(sender, DEFAULT_FEE, utf8(b"acfg"));
 		op::itxn_field_Total(total);
 		op::itxn_field_Decimals(decimals);
 		op::itxn_field_DefaultFrozen(default_frozen);
 	}
 
-	public fun init_asset_transfer(id: u64, sender: address, receiver: address) {
-		init_header(DEFAULT_FEE, utf8(b"axfer"), sender);
+	public fun init_asset_transfer(sender: address, id: u64, receiver: address) {
+		init_header(sender, DEFAULT_FEE, utf8(b"axfer"));
 		op::itxn_field_XferAsset(id);
 		op::itxn_field_AssetReceiver(receiver);
 	}
 
 
 	// shortcuts to common transactions
-	//   - perform an init and then call submit()
+	//   - perform an init and then call op::itxn_submit()
 	//   - users cannot add fields
 
 	public fun pay(sender: address, receiver: address, amount: u64) {
 		init_pay(sender, receiver, amount);
-		submit();
+		op::itxn_submit();
 	}
 
 	public fun asset_config(sender: address, total: u64, decimals: u64, default_frozen: bool) {
 		init_asset_config(sender, total, decimals, default_frozen);
-		submit();
-	}
-
-	public fun asset_transfer(id: u64, amount: u64, sender: address, receiver: address) {
-		init_asset_transfer(id, sender, receiver);
-		op::itxn_field_AssetSender(@0x0);	// address 0 when normal transfer between accounts (see Algorand doc) 
-		op::itxn_field_AssetAmount(amount);
-		submit();
-	}
-
-	public fun asset_optin(id: u64, sender: address, receiver: address) {
-		init_asset_transfer(id, sender, receiver);
-		submit();
-	}
-
-
-	// stubs
-
-	public fun submit() {
 		op::itxn_submit();
 	}
 
-	public fun get_sender(): address {
-		op::txn_Sender()
+	public fun asset_transfer(sender: address, id: u64, amount: u64, receiver: address) {
+		init_asset_transfer(sender, id, receiver);
+		op::itxn_field_AssetSender(@0x0);	// address 0 when normal transfer between senderounts (see Algorand doc) 
+		op::itxn_field_AssetAmount(amount);
+		op::itxn_submit();
 	}
 
-	public fun get_sender_as_signer(): signer {
-		create_signer(get_sender())
+	public fun asset_optin(sender: address, id: u64, receiver: address) {
+		init_asset_transfer(sender, id, receiver);
+		op::itxn_submit();
 	}
 
-	// TODO: occhio a queste due. 
-	// Al momento sono native perche' il transpiler le traduce in modo che non facciano nulla.
-	// Noi infatti non abbiamo signer in Algorand, ma solo address. 
-	// Mentre il tipo signer e' una astrazione di Move che noi supportiamo solamente perche' serve alla move_to().
-	// Ma trattiamo i signer esattamente come fossero semplici address: insomma in Algorand &signer = address
+	public fun retrieve_asset_id<AssetType>(): u64 {
+		let name = name_of<AssetType>();
+		let len = op::txn_NumAssets();
+		let i = 0;
+		while (i < len) {
+			let id = op::txnas_Assets(i);
+			let s = op::asset_params_get_AssetName(id);
+			if (s == name) return id;
+			i = i + 1;
+		};
+		assert!(false, 0);
+		0
+	}
+
+	// natives
+	//
+
+	native public fun name_of<T>(): String;
 	native public fun address_of_signer(s: &signer) : address;
-	native public fun create_signer(addr: address): signer;
 	native public fun bytes_of_address(a: address): vector<u8>;
+
+
+
 
 }

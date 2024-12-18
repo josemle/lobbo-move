@@ -6,7 +6,9 @@ module algomove::opcode {
 	
 	native public fun txn_Sender(): address;
 	native public fun txn_CreatedAssetID(): u64;
-
+	native public fun txn_NumAssets(): u64;
+	native public fun txnas_Assets(i: u64): u64;
+	
 	// inner transactions
 
 	native public fun itxn_begin();
@@ -40,26 +42,24 @@ module algomove::opcode {
 	native public fun global_CurrentApplicationAddress(): address;
 	native public fun global_CurrentApplicationID(): u64;
 	native public fun global_LatestTimestamp(): u64;
-	// TODO: aggiungere gli altri
 
-	// balance
+	// balance and assets
 
 	native public fun balance(acc: address): u64;
 	native public fun asset_holding_get_AssetBalance(addr: address, id: u64): u64;
 	native public fun asset_holding_get_AssetFrozen(addr: address, id: u64): bool;
+	native public fun asset_params_get_AssetName(id: u64): String;
 
-	// local storage
+	// local state
 
 	native public fun app_local_put<T: key>(addr: address, k: vector<u8>, data: T);
 	native public fun app_local_put_bytes(addr: address, k: vector<u8>, data: vector<u8>);
 	native public fun app_local_put_u64(addr: address, k: vector<u8>, data: u64);
-
-	//native public fun app_local_get_drop<T: key + drop>(addr: address, k: vector<u8>): T;
 	native public fun app_local_get<T: key>(addr: address, k: vector<u8>): T;
 	native public fun app_local_get_bytes(addr: address, k: vector<u8>): vector<u8>;
 	native public fun app_local_get_u64(addr: address, k: vector<u8>): u64;
 
-	// global storage
+	// global state
 
 	native public fun app_global_put<T: key>(k: vector<u8>, data: T);
 	native public fun app_global_put_bytes(k: vector<u8>, data: vector<u8>);
