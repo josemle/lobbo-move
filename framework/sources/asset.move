@@ -4,22 +4,16 @@ module algomove::asset {
 	use algomove::transaction as txn;
 	use std::string::{String};
 
-	struct Handle<phantom AssetType> has copy, drop {
-		id: u64,
-		owner: address
-	}
-
 	struct Asset<phantom AssetType> has store {
 		id: u64,
 		amount: u64,
 		owner: address
 	}
 	
-	public fun create<AssetType>(acc: &signer, total: u64, decimals: u64, default_frozen: bool,
-		name: String, short_name: String): Asset<AssetType> {
+	public fun create<AssetType>(acc: &signer, total: u64, decimals: u64, default_frozen: bool, short_name: String): Asset<AssetType> {
 		let sender = txn::address_of_signer(acc);
 		txn::init_asset_config(sender, total, decimals, default_frozen);
-		op::itxn_field_Name(name);
+		op::itxn_field_Name(txn::name_of<AssetType>());
 		op::itxn_field_UnitName(short_name);
 		op::itxn_submit();
 		Asset<AssetType> { id: op::txn_CreatedAssetID(), amount: total, owner: sender }

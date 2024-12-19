@@ -6,9 +6,7 @@ module algomove::transaction {
 
 	const DEFAULT_FEE: u64 = 1000;
 
-	// transaction initializers
-	//   - require an explicit op::itxn_submit() call afterwards
-	//   - users can add fields using proper opcodes
+	// transaction initializers (require an explicit op::itxn_submit() call afterwards)
 
 	public fun init_header(sender: address, fee: u64, ty: String) {
 		op::itxn_begin();
@@ -36,10 +34,7 @@ module algomove::transaction {
 		op::itxn_field_AssetReceiver(receiver);
 	}
 
-
 	// shortcuts to common transactions
-	//   - perform an init and then call op::itxn_submit()
-	//   - users cannot add fields
 
 	public fun pay(sender: address, receiver: address, amount: u64) {
 		init_pay(sender, receiver, amount);
@@ -62,6 +57,8 @@ module algomove::transaction {
 		init_asset_transfer(sender, id, receiver);
 		op::itxn_submit();
 	}
+
+	// other stuff
 
 	public fun retrieve_asset_id<AssetType>(): u64 {
 		let name = name_of<AssetType>();
