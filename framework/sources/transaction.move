@@ -21,11 +21,13 @@ module algomove::transaction {
 		op::itxn_field_Amount(amount);
 	}
 
-	public fun init_asset_config(sender: address, total: u64, decimals: u64, default_frozen: bool) {
+	public fun init_asset_config(sender: address, total: u64, decimals: u64, default_frozen: bool,  name: String, short_name: String) {		
 		init_header(sender, DEFAULT_FEE, utf8(b"acfg"));
 		op::itxn_field_Total(total);
 		op::itxn_field_Decimals(decimals);
 		op::itxn_field_DefaultFrozen(default_frozen);
+		op::itxn_field_Name(name);
+		op::itxn_field_UnitName(short_name);
 	}
 
 	public fun init_asset_transfer(sender: address, id: u64, receiver: address) {
@@ -41,8 +43,8 @@ module algomove::transaction {
 		op::itxn_submit();
 	}
 
-	public fun asset_config(sender: address, total: u64, decimals: u64, default_frozen: bool) {
-		init_asset_config(sender, total, decimals, default_frozen);
+	public fun asset_config(sender: address, total: u64, decimals: u64, default_frozen: bool, name: String, short_name: String) {
+		init_asset_config(sender, total, decimals, default_frozen, name, short_name);
 		op::itxn_submit();
 	}
 

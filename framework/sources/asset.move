@@ -12,10 +12,8 @@ module algomove::asset {
 	
 	public fun create<AssetType>(acc: &signer, total: u64, decimals: u64, default_frozen: bool, short_name: String): Asset<AssetType> {
 		let sender = txn::address_of_signer(acc);
-		txn::init_asset_config(sender, total, decimals, default_frozen);
-		op::itxn_field_Name(txn::name_of<AssetType>());
-		op::itxn_field_UnitName(short_name);
-		op::itxn_submit();
+		let name = txn::name_of<AssetType>();
+		txn::asset_config(sender, total, decimals, default_frozen, name, short_name);
 		Asset<AssetType> { id: op::txn_CreatedAssetID(), amount: total, owner: sender }
 	}
 
