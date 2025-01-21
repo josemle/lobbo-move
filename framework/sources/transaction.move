@@ -4,7 +4,7 @@ module algomove::transaction {
 	use std::string::{String, utf8};
 	use algomove::opcode as op;
 
-	const DEFAULT_FEE: u64 = 1000;
+	const DEFAULT_FEE: u64 = 100;
 
 	// transaction initializers (require an explicit op::itxn_submit() call afterwards)
 

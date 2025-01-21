@@ -1,4 +1,5 @@
 # Build the sample contract in this directory using Beaker and output to ./artifacts
+import utils.session
 from pathlib import Path
 
 import sample_trans1

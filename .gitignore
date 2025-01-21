@@ -11,3 +11,5 @@ experiments/sui/Move.lock
 
 experiments/aptos/.vscode/settings.json
 *.lock
+config.bat
+node_modules
